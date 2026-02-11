@@ -1,0 +1,92 @@
+{
+  "name": "angular-tailwind",
+  "displayName": "Angular Tailwind",
+  "version": "0.10.1",
+  "description": "Angular & Tailwind CSS Admin Dashboard Starter Kit, Free and Open Source",
+  "homepage": "https://github.com/lannodev/angular-tailwind#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lannodev/angular-tailwind.git"
+  },
+  "keywords": [
+    "angular",
+    "tailwind",
+    "starter-kit",
+    "tailwind-template",
+    "dark mode",
+    "open source"
+  ],
+  "author": "Luciano Oliveira <me@lanno.dev>",
+  "license": "MIT",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --open",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test",
+    "test:e2e": "npx playwright test --ui",
+    "prettier": "prettier --config ./.prettierrc --write \"src/{app,environments}/**/*{.ts,.html,.scss,.json}\"",
+    "prettier:verify": "prettier --config ./.prettierrc --check \"src/{app,environments}/**/*{.ts,.html,.scss,.json}\"",
+    "prettier:staged": "pretty-quick --staged",
+    "lint": "ng lint"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^20.0.2",
+    "@angular/common": "^20.0.2",
+    "@angular/compiler": "^20.0.2",
+    "@angular/core": "^20.0.2",
+    "@angular/fire": "^20.0.1",
+    "@angular/forms": "^20.0.2",
+    "@angular/platform-browser": "^20.0.2",
+    "@angular/platform-browser-dynamic": "^20.0.2",
+    "@angular/router": "^20.0.2",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.10",
+    "@tailwindcss/postcss": "^4.0.3",
+    "@tailwindcss/typography": "^0.5.16",
+    "angular-svg-icon": "^13.0.0",
+    "apexcharts": "^3.35.3",
+    "docx": "^9.5.1",
+    "file-saver": "^2.0.5",
+    "firebase": "^11.10.0",
+    "mammoth": "^1.11.0",
+    "ng-apexcharts": "^1.7.1",
+    "ngx-doc-viewer": "^15.0.1",
+    "ngx-file-drop": "^16.0.0",
+    "ngx-sonner": "^2.0.1",
+    "rxjs": "^7.8.2",
+    "tslib": "^2.3.0",
+    "uuid": "^13.0.0",
+    "zone.js": "~0.15.0"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.0.1",
+    "@angular/cli": "^20.0.1",
+    "@angular/compiler-cli": "^20.0.2",
+    "@playwright/test": "^1.50.1",
+    "@types/file-saver": "^2.0.7",
+    "@types/jasmine": "~3.10.0",
+    "@types/node": "^12.11.1",
+    "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.7",
+    "cz-conventional-changelog": "^3.3.0",
+    "jasmine-core": "~3.10.0",
+    "karma": "^6.4.4",
+    "karma-chrome-launcher": "~3.1.0",
+    "karma-coverage": "~2.0.3",
+    "karma-jasmine": "~4.0.0",
+    "karma-jasmine-html-reporter": "~1.7.0",
+    "postcss": "^8.5.3",
+    "prettier": "^2.7.1",
+    "prettier-plugin-tailwindcss": "^0.1.12",
+    "tailwind-scrollbar": "^4.0.0",
+    "tailwindcss": "^4.0.5",
+    "typescript": "~5.8.3"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  }
+}

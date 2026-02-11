@@ -1,0 +1,18 @@
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.badge {
+  font-size: 0.8em;
+  padding: 0.5em 0.8em;
+}
+
+.form-control {
+  font-size: 0.9rem;
+}
+
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}

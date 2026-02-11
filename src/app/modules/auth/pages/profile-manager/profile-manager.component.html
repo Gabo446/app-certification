@@ -1,0 +1,174 @@
+<div class="container mt-4">
+  <h2>Mantenedor de Perfiles</h2>
+
+  <!-- Botón para nuevo perfil -->
+  <button appButton type="button" (click)="addNewProfile()" class="btn btn-primary mb-3">
+    + Nuevo Perfil
+  </button>
+
+  <!-- Filtro por rol -->
+  <div class="mb-3">
+    <label>Filtrar por rol:</label>
+    <select (change)="filterByRole($any($event.target).value)" class="form-control w-auto d-inline-block ms-2">
+      <option value="">Todos</option>
+      <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+    </select>
+  </div>
+
+  <!-- Formulario de edición/creación -->
+  <div class="card p-4 mb-4" *ngIf="showForm">
+    <h4>{{ editingId ? 'Editar' : 'Nuevo' }} Perfil</h4>
+    <form [formGroup]="profileForm" (ngSubmit)="saveProfile()">
+      <div class="row">
+        <div class="col-md-6">
+          <label>Email *</label>
+          <input type="email" formControlName="email" class="form-control" />
+          <small class="text-danger" *ngIf="profileForm.get('email')?.invalid && profileForm.get('email')?.touched">
+            Email válido requerido.
+          </small>
+        </div>
+
+        <div class="col-md-6">
+          <label>RUT *</label>
+          <input
+            type="text"
+            formControlName="rut"
+            (input)="formatRut($event, 'rut')"
+            class="form-control"
+            placeholder="12.345.678-9"
+          />
+          <small class="text-danger" *ngIf="profileForm.get('rut')?.hasError('invalidRut')">
+            RUT inválido.
+          </small>
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <label>Nombres *</label>
+          <input type="text" formControlName="nombres" class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label>Apellido Paterno *</label>
+          <input type="text" formControlName="apellidoPaterno" class="form-control" />
+        </div>
+        <div class="col-md-4">
+          <label>Apellido Materno *</label>
+          <input type="text" formControlName="apellidoMaterno" class="form-control" />
+        </div>
+      </div>
+
+      <div class="row mt-2">
+        <div class="col-md-4">
+          <label>Fecha Nacimiento *</label>
+          <input type="date" formControlName="fechaNacimiento" class="form-control" />
+          <small class="text-danger" *ngIf="profileForm.get('fechaNacimiento')?.hasError('invalidAge')">
+            Debe ser mayor de 18 años.
+          </small>
+        </div>
+        <div class="col-md-4">
+          <label>Rol *</label>
+          <select formControlName="role" class="form-control">
+            <option *ngFor="let r of roles" [value]="r.value">{{ r.label }}</option>
+          </select>
+        </div>
+        <div class="col-md-4">
+          <label>Estado</label>
+          <select formControlName="isActive" class="form-control">
+            <option [value]="true">Activo</option>
+            <option [value]="false">Inactivo</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Campos específicos para Empresa -->
+      <div *ngIf="profileForm.get('role')?.value === 'empresa'" class="mt-3 border-top pt-3">
+        <h5>Datos de la Empresa</h5>
+        <div class="row">
+          <div class="col-md-6">
+            <label>Nombre de Empresa *</label>
+            <input type="text" formControlName="empresa_nombre" class="form-control" />
+          </div>
+          <div class="col-md-6">
+            <label>RUT Empresa *</label>
+            <input
+              type="text"
+              formControlName="empresa_rut"
+              (input)="formatRut($event, 'empresa_rut')"
+              class="form-control"
+              placeholder="99.999.999-9"
+            />
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label>Giro *</label>
+            <input type="text" formControlName="empresa_giro" class="form-control" />
+          </div>
+          <div class="col-md-6">
+            <label>Dirección *</label>
+            <input type="text" formControlName="empresa_direccion" class="form-control" />
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label>Teléfono *</label>
+            <input type="text" formControlName="empresa_telefono" class="form-control" />
+          </div>
+          <div class="col-md-6">
+            <label>Contacto (Nombre)</label>
+            <input type="text" formControlName="empresa_contactoNombre" class="form-control" />
+          </div>
+        </div>
+        <div class="row mt-2">
+          <div class="col-md-6">
+            <label>Contacto (Email)</label>
+            <input type="email" formControlName="empresa_contactoEmail" class="form-control" />
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-4">
+        <button type="submit" [disabled]="isSubmitting" class="btn btn-success me-2">
+          {{ isSubmitting ? 'Guardando...' : 'Guardar' }}
+        </button>
+        <button type="button" (click)="cancelEdit()" class="btn btn-secondary">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Tabla de perfiles -->
+  <table class="table table-striped">
+    <thead>
+    <tr>
+      <th>Nombre</th>
+      <th>Email</th>
+      <th>RUT</th>
+      <th>Rol</th>
+      <th>Empresa</th>
+      <th>Estado</th>
+      <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr *ngFor="let user of filteredProfiles$ | async">
+      <td>{{ user.displayName }}</td>
+      <td>{{ user.email }}</td>
+      <td>{{ user.rut }}</td>
+      <td><span class="badge bg-primary">{{ getRoleLabel(user.role) }}</span></td>
+      <td>{{ user.empresa?.nombre || '-' }}</td>
+      <td>
+          <span [class]="'badge ' + (user.isActive ? 'bg-success' : 'bg-danger')">
+            {{ user.isActive ? 'Activo' : 'Inactivo' }}
+          </span>
+      </td>
+      <td>
+        <button (click)="editProfile(user.id)" class="btn btn-sm btn-outline-primary me-1">Editar</button>
+        <button (click)="deleteProfile(user.id)" class="btn btn-sm btn-outline-danger">Eliminar</button>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+</div>

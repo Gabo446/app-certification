@@ -1,0 +1,250 @@
+<form class="my-10 space-y-6" [formGroup]="form">
+  <div class="text-center">
+    <h2 class="text-foreground mb-1 text-3xl font-semibold">Sign Up <span class="text-primary">!</span></h2>
+    <p class="text-muted-foreground text-sm">Complete your registration information</p>
+  </div>
+
+  <!-- Google Sign Up -->
+  <div routerLink="/dashboard">
+    <app-button full impact="bold" tone="light" shape="rounded" size="medium">
+      <svg-icon src="assets/icons/google-logo.svg" [svgClass]="'h-6 w-6 mr-2'"> </svg-icon>
+      Sign Up with Google
+    </app-button>
+  </div>
+
+  <div
+    class="before:border-muted after:border-muted my-4 flex items-center before:mt-0.5 before:flex-1 before:border-t after:mt-0.5 after:flex-1 after:border-t">
+    <p class="text-muted-foreground mx-4 mb-0 text-center text-sm">or</p>
+  </div>
+
+  <div class="space-y-3 text-left">
+    <!-- Email -->
+    <div class="relative">
+      <input
+        type="text"
+        id="email"
+        [ngClass]="{ 'is__invalid-input': submitted && f['email'].errors }"
+        class="peer block"
+        placeholder=" "
+        formControlName="email" />
+      <label
+        for="email"
+        [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['email'].errors }"
+        class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+        Email address
+      </label>
+      <div *ngIf="submitted && f['email'].errors" class="is__invalid-error">
+        <div *ngIf="f['email'].errors?.['required']">Required field</div>
+        <div *ngIf="f['email'].errors?.['email']">Email must be a valid email address</div>
+      </div>
+    </div>
+
+    <!-- Nombres -->
+    <div class="relative">
+      <input
+        type="text"
+        id="nombres"
+        [ngClass]="{ 'is__invalid-input': submitted && f['nombres'].errors }"
+        class="peer block"
+        placeholder=" "
+        formControlName="nombres" />
+      <label
+        for="nombres"
+        [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['nombres'].errors }"
+        class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+        Nombres
+      </label>
+      <div *ngIf="submitted && f['nombres'].errors" class="is__invalid-error">
+        <div *ngIf="f['nombres'].errors?.['required']">Required field</div>
+        <div *ngIf="f['nombres'].errors?.['minlength']">Minimum 2 characters</div>
+      </div>
+    </div>
+
+    <!-- Apellidos en una fila -->
+    <div class="grid grid-cols-2 gap-3">
+      <!-- Apellido Paterno -->
+      <div class="relative">
+        <input
+          type="text"
+          id="apellidoPaterno"
+          [ngClass]="{ 'is__invalid-input': submitted && f['apellidoPaterno'].errors }"
+          class="peer block"
+          placeholder=" "
+          formControlName="apellidoPaterno" />
+        <label
+          for="apellidoPaterno"
+          [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['apellidoPaterno'].errors }"
+          class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+          Apellido Paterno
+        </label>
+        <div *ngIf="submitted && f['apellidoPaterno'].errors" class="is__invalid-error">
+          <div *ngIf="f['apellidoPaterno'].errors?.['required']">Required field</div>
+          <div *ngIf="f['apellidoPaterno'].errors?.['minlength']">Minimum 2 characters</div>
+        </div>
+      </div>
+
+      <!-- Apellido Materno -->
+      <div class="relative">
+        <input
+          type="text"
+          id="apellidoMaterno"
+          [ngClass]="{ 'is__invalid-input': submitted && f['apellidoMaterno'].errors }"
+          class="peer block"
+          placeholder=" "
+          formControlName="apellidoMaterno" />
+        <label
+          for="apellidoMaterno"
+          [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['apellidoMaterno'].errors }"
+          class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+          Apellido Materno
+        </label>
+        <div *ngIf="submitted && f['apellidoMaterno'].errors" class="is__invalid-error">
+          <div *ngIf="f['apellidoMaterno'].errors?.['required']">Required field</div>
+          <div *ngIf="f['apellidoMaterno'].errors?.['minlength']">Minimum 2 characters</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RUT -->
+    <div class="relative">
+      <input
+        type="text"
+        id="rut"
+        [ngClass]="{ 'is__invalid-input': submitted && f['rut'].errors }"
+        class="peer block"
+        placeholder=" "
+        formControlName="rut"
+        (input)="formatRut($event)" />
+      <label
+        for="rut"
+        [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['rut'].errors }"
+        class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+        RUT (12.345.678-9)
+      </label>
+      <div *ngIf="submitted && f['rut'].errors" class="is__invalid-error">
+        <div *ngIf="f['rut'].errors?.['required']">Required field</div>
+        <div *ngIf="f['rut'].errors?.['invalidRut']">Invalid RUT format</div>
+      </div>
+    </div>
+
+    <!-- Fecha de Nacimiento -->
+    <div class="relative">
+      <input
+        type="date"
+        id="fechaNacimiento"
+        [ngClass]="{ 'is__invalid-input': submitted && f['fechaNacimiento'].errors }"
+        class="peer block"
+        formControlName="fechaNacimiento" />
+      <label
+        for="fechaNacimiento"
+        [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['fechaNacimiento'].errors }"
+        class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-2 peer-placeholder-shown:-translate-y-4 peer-placeholder-shown:scale-95 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+        Fecha de Nacimiento
+      </label>
+      <div *ngIf="submitted && f['fechaNacimiento'].errors" class="is__invalid-error">
+        <div *ngIf="f['fechaNacimiento'].errors?.['required']">Required field</div>
+        <div *ngIf="f['fechaNacimiento'].errors?.['invalidAge']">You must be at least 18 years old</div>
+      </div>
+    </div>
+
+    <!-- Password -->
+    <div class="relative">
+      <input
+        [type]="passwordTextType ? 'text' : 'password'"
+        id="password"
+        [ngClass]="{ 'is__invalid-input': submitted && f['password'].errors }"
+        class="peer block"
+        placeholder=" "
+        formControlName="password" />
+      <label
+        for="password"
+        [ngClass]="{ 'peer-focus:text-destructive!': submitted && f['password'].errors }"
+        class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2 ltr:left-1 rtl:right-1">
+        Password
+      </label>
+      <span
+        class="text-muted-foreground absolute top-2 cursor-pointer ltr:right-3 rtl:left-3"
+        (click)="togglePasswordTextType()">
+          <svg-icon
+            [src]="
+              !passwordTextType
+                ? 'assets/icons/heroicons/outline/eye-off.svg'
+                : 'assets/icons/heroicons/outline/eye.svg'
+            "
+            [svgClass]="'h-5 w-5'">
+          </svg-icon>
+        </span>
+      <div *ngIf="submitted && f['password'].errors" class="is__invalid-error">
+        <div *ngIf="f['password'].errors?.['required']">Required field</div>
+        <div *ngIf="f['password'].errors?.['minlength']">Password must be at least 8 characters</div>
+      </div>
+    </div>
+
+    <!-- Password Meeter -->
+    <div class="grid grid-cols-4 gap-2">
+      <div class="rounded-xs bg-muted h-1"></div>
+      <div class="rounded-xs bg-muted h-1"></div>
+      <div class="rounded-xs bg-muted h-1"></div>
+      <div class="rounded-xs bg-muted h-1"></div>
+    </div>
+    <span class="text-muted-foreground text-xs">
+      Use 8 or more characters with a mix of letters, numbers & symbols.
+    </span>
+
+    <!-- Confirm Password -->
+    <div class="relative">
+      <input
+        type="password"
+        id="confirm-password"
+        [ngClass]="{ 'is__invalid-input': submitted && (form.hasError('notSame') || f['confirmPassword'].errors) }"
+        class="peer block"
+        placeholder=" "
+        formControlName="confirmPassword" />
+      <label
+        for="confirm-password"
+        [ngClass]="{ 'peer-focus:text-destructive!': submitted && (form.hasError('notSame') || f['confirmPassword'].errors) }"
+        class="bg-background text-muted-foreground peer-focus:text-primary absolute top-2 left-1 z-10 origin-[0] -translate-y-4 scale-95 transform px-2 text-sm duration-300 peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:scale-100 peer-focus:top-2 peer-focus:-translate-y-4 peer-focus:scale-95 peer-focus:px-2">
+        Confirm Password
+      </label>
+      <div *ngIf="submitted && f['confirmPassword'].errors" class="is__invalid-error">
+        <div *ngIf="f['confirmPassword'].errors?.['required']">Required field</div>
+      </div>
+    </div>
+    <div *ngIf="submitted && form.hasError('notSame')" class="text-danger text-sm">
+      Passwords do not match.
+    </div>
+  </div>
+
+  <div class="flex items-center justify-between space-x-3">
+    <div class="flex items-center gap-1">
+      <input id="accept-term" name="accept-term" type="checkbox" formControlName="acceptTerms" />
+      <label for="accept-term" class="text-muted-foreground ml-2 block text-sm"> I Accept the </label>
+      <app-button impact="none" tone="primary" shape="rounded" size="small"> Terms </app-button>
+    </div>
+    <div *ngIf="submitted && f['acceptTerms'].errors" class="text-danger text-sm">
+      You must accept the terms
+    </div>
+  </div>
+
+  <!-- Submit Button -->
+  <div>
+    <app-button
+      full
+      impact="bold"
+      tone="primary"
+      shape="rounded"
+      size="medium"
+      (click)="register()"
+      [disabled]="isRegistering">
+      {{ isRegistering ? 'Registering...' : 'Sign up' }}
+    </app-button>
+  </div>
+
+  <!-- Sign-in -->
+  <div class="text-muted-foreground flex items-center text-sm">
+    Already have an Account?
+    <app-button routerLink="/auth/sign-in" impact="none" tone="primary" shape="rounded" size="small">
+      Sign in
+    </app-button>
+  </div>
+</form>

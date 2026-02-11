@@ -1,0 +1,150 @@
+:host {
+  display: block;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #121212;
+  color: #e0e0e0;
+  height: 100%;
+}
+
+.document-manager-container {
+  padding: 20px;
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  margin: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.document-manager-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.document-manager-title {
+  color: #ffffff;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.document-manager-description {
+  color: #b0b0b0;
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.btn-primary {
+  background-color: #e53935;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #d32f2f;
+}
+
+.document-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #252525;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.document-table th {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+}
+
+.document-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #333;
+  color: #e0e0e0;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-draft {
+  background-color: #6a1b9a;
+  color: white;
+}
+
+.status-review {
+  background-color: #1e88e5;
+  color: white;
+}
+
+.status-approved {
+  background-color: #43a047;
+  color: white;
+}
+
+.status-rejected {
+  background-color: #e53935;
+  color: white;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #2d2d2d;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: #e0e0e0;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: #e53935;
+  box-shadow: 0 0 0 2px rgba(229, 57, 53, 0.2);
+}
+
+/* Estilo de scrollbar para tema oscuro */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #252525;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+tbody tr:hover {
+  transform: translateX(2px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Asegurar que los estilos se apliquen a los elementos específicos del HTML */
+.document-manager-title,
+.document-manager-description,
+.btn-primary,
+.document-table,
+.status-badge,
+.form-control {
+  /* Añadir !important para forzar la aplicación de estilos si hay conflictos */
+  /* Si el problema persiste, intenta descomentar estas líneas */
+  /* !important; */
+}

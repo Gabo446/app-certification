@@ -1,0 +1,321 @@
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 py-8 px-4">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-slate-800 mb-2">
+        Editor de Documentos Word
+      </h1>
+      <p class="text-slate-600">
+        Carga, edita y descarga documentos .docx con facilidad
+      </p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <!-- Drop Zone -->
+      @if (!htmlContent) {
+        <div class="p-8">
+          <ngx-file-drop
+            dropZoneClassName="drop-zone"
+            contentClassName="drop-content"
+            (onFileDrop)="onFileDropped($event)"
+            [multiple]="false"
+            accept=".docx">
+            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+              <div class="text-center py-16">
+                <svg class="mx-auto h-16 w-16 text-slate-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                </svg>
+                <p class="text-xl text-slate-700 mb-2">
+                  Arrastra tu archivo .docx aquí
+                </p>
+                <p class="text-slate-500 mb-4">o</p>
+                <div class="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                  <button
+                    (click)="openFileSelector()"
+                    class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg">
+                    Seleccionar archivo
+                  </button>
+                  <button
+                    (click)="createNewDocument()"
+                    class="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium shadow-md hover:shadow-lg flex items-center space-x-2">
+                    <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    <span>Crear desde cero</span>
+                  </button>
+                </div>
+              </div>
+            </ng-template>
+          </ngx-file-drop>
+        </div>
+      }
+
+      <!-- Editor Area -->
+      @if (htmlContent) {
+        <div class="flex flex-col h-full">
+          <!-- Main Toolbar -->
+          <div class="bg-slate-50 border-b border-slate-200 px-4 py-3">
+            <div class="flex items-center justify-between mb-3">
+              <div class="flex items-center space-x-2">
+                <svg class="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+                <span class="text-sm font-medium text-slate-700">{{ fileName }}.docx</span>
+              </div>
+              <div class="flex flex-wrap gap-2">
+                <button
+                  (click)="printHTMLToConsole()"
+                  class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 font-medium text-sm shadow-sm hover:shadow flex items-center space-x-2"
+                  title="Imprimir HTML en consola (Ctrl+P)">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                  </svg>
+                  <span>Ver HTML</span>
+                </button>
+                <button
+                  (click)="downloadDocument()"
+                  class="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors duration-200 font-medium text-sm shadow-sm hover:shadow flex items-center space-x-2">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                  </svg>
+                  <span>Descargar</span>
+                </button>
+                <button
+                  (click)="resetEditor()"
+                  class="px-4 py-2 bg-slate-600 text-white rounded-lg hover:bg-slate-700 transition-colors duration-200 font-medium text-sm shadow-sm hover:shadow flex items-center space-x-2">
+                  <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                  </svg>
+                  <span>Nuevo</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Formatting Toolbar -->
+            <div class="flex flex-wrap gap-2 items-center">
+              <!-- Undo/Redo -->
+              <button
+                (click)="undo()"
+                [disabled]="!canUndo()"
+                class="toolbar-btn"
+                [class.opacity-50]="!canUndo()"
+                [class.cursor-not-allowed]="!canUndo()"
+                title="Deshacer (Ctrl+Z)">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                </svg>
+              </button>
+
+              <button
+                (click)="redo()"
+                [disabled]="!canRedo()"
+                class="toolbar-btn"
+                [class.opacity-50]="!canRedo()"
+                [class.cursor-not-allowed]="!canRedo()"
+                title="Rehacer (Ctrl+Y)">
+                <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10h-10a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6"/>
+                </svg>
+              </button>
+
+              <div class="h-6 w-px bg-slate-300"></div>
+
+              <!-- Font Family -->
+              <select
+                (change)="changeFontFamily($any($event.target).value)"
+                class="px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-slate-50 cursor-pointer">
+                <option value="">Fuente</option>
+                <option value="Arial">Arial</option>
+                <option value="Calibri">Calibri</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Comic Sans MS">Comic Sans MS</option>
+                <option value="Impact">Impact</option>
+              </select>
+
+              <!-- Font Size -->
+              <select
+                (change)="changeFontSize($any($event.target).value)"
+                class="px-3 py-1.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white hover:bg-slate-50 cursor-pointer">
+                <option value="">Tamaño</option>
+                <option value="8px">8</option>
+                <option value="9px">9</option>
+                <option value="10px">10</option>
+                <option value="11px">11</option>
+                <option value="12px">12</option>
+                <option value="14px">14</option>
+                <option value="16px">16</option>
+                <option value="18px">18</option>
+                <option value="20px">20</option>
+                <option value="22px">22</option>
+                <option value="24px">24</option>
+                <option value="26px">26</option>
+                <option value="28px">28</option>
+                <option value="36px">36</option>
+                <option value="48px">48</option>
+                <option value="72px">72</option>
+              </select>
+
+              <div class="h-6 w-px bg-slate-300"></div>
+
+              <!-- Text Formatting -->
+              <button (click)="execCommand('bold')" class="toolbar-btn" title="Negrita (Ctrl+B)">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M6 4v12h4.5c2.5 0 4.5-2 4.5-4.5S13 7 10.5 7H6zm2 2h2.5c1.4 0 2.5 1.1 2.5 2.5S11.9 11 10.5 11H8V6zm0 7h2.8c1.6 0 2.7 1.1 2.7 2.5S12.4 18 10.8 18H8v-5z"/>
+                </svg>
+              </button>
+
+              <button (click)="execCommand('italic')" class="toolbar-btn" title="Cursiva (Ctrl+I)">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M10 4v2h1.6l-3.2 8H7v2h6v-2h-1.6l3.2-8H16V4h-6z"/>
+                </svg>
+              </button>
+
+              <button (click)="execCommand('underline')" class="toolbar-btn" title="Subrayado (Ctrl+U)">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M6 3v7c0 2.2 1.8 4 4 4s4-1.8 4-4V3h-2v7c0 1.1-.9 2-2 2s-2-.9-2-2V3H6zm-2 14h12v2H4v-2z"/>
+                </svg>
+              </button>
+
+              <button (click)="execCommand('strikeThrough')" class="toolbar-btn" title="Tachado">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M16 9H4v2h12V9zm-4-4H8v2h4V5zm2 8H6v2h8v-2z"/>
+                </svg>
+              </button>
+
+              <div class="h-6 w-px bg-slate-300"></div>
+
+              <!-- Colors -->
+              <div class="flex items-center space-x-1">
+                <label class="toolbar-btn cursor-pointer" title="Color de texto">
+                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M13.2 2L10 9.5 6.8 2H4l4.5 10H6v2h8v-2h-2.5L16 2h-2.8z"/>
+                  </svg>
+                  <input
+                    type="color"
+                    (change)="changeTextColor($any($event.target).value)"
+                    class="absolute opacity-0 w-0 h-0">
+                </label>
+
+                <label class="toolbar-btn cursor-pointer" title="Color de fondo">
+                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M4 14h12v2H4v-2zm8-10L8 8h8l-4-4zm0 2.5L13.5 9h-3l1.5-2.5z"/>
+                  </svg>
+                  <input
+                    type="color"
+                    (change)="changeBackgroundColor($any($event.target).value)"
+                    class="absolute opacity-0 w-0 h-0">
+                </label>
+              </div>
+
+              <div class="h-6 w-px bg-slate-300"></div>
+
+              <!-- Alignment -->
+              <button (click)="changeAlignment('left')" class="toolbar-btn" title="Alinear a la izquierda">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4h14v2H3V4zm0 4h10v2H3V8zm0 4h14v2H3v-2zm0 4h10v2H3v-2z"/>
+                </svg>
+              </button>
+
+              <button (click)="changeAlignment('center')" class="toolbar-btn" title="Centrar">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4h14v2H3V4zm2 4h10v2H5V8zm-2 4h14v2H3v-2zm2 4h10v2H5v-2z"/>
+                </svg>
+              </button>
+
+              <button (click)="changeAlignment('right')" class="toolbar-btn" title="Alinear a la derecha">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4h14v2H3V4zm4 4h10v2H7V8zm-4 4h14v2H3v-2zm4 4h10v2H7v-2z"/>
+                </svg>
+              </button>
+
+              <button (click)="changeAlignment('justify')" class="toolbar-btn" title="Justificar">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 4h14v2H3V4zm0 4h14v2H3V8zm0 4h14v2H3v-2zm0 4h14v2H3v-2z"/>
+                </svg>
+              </button>
+
+              <div class="h-6 w-px bg-slate-300"></div>
+
+              <!-- Lists -->
+              <button (click)="insertList(false)" class="toolbar-btn" title="Lista con viñetas">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4 4a1 1 0 100 2 1 1 0 000-2zm3 1h10v1H7V5zm-3 4a1 1 0 100 2 1 1 0 000-2zm3 1h10v1H7v-1zm-3 4a1 1 0 100 2 1 1 0 000-2zm3 1h10v1H7v-1z"/>
+                </svg>
+              </button>
+
+              <button (click)="insertList(true)" class="toolbar-btn" title="Lista numerada">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M4 3v3h1V4h1V3H4zm2 5v1h1v3h1V8H6zm-2 4v1h3v1H3v1h4v-4H4v1zm3-8h10v1H7V4zm0 5h10v1H7V9zm0 5h10v1H7v-1z"/>
+                </svg>
+              </button>
+
+              <div class="h-6 w-px bg-slate-300"></div>
+
+              <!-- Insert -->
+              <button (click)="insertLink()" class="toolbar-btn" title="Insertar enlace">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M12.586 4.586a2 2 0 112.828 2.828l-3 3a2 2 0 01-2.828 0 1 1 0 00-1.414 1.414 4 4 0 005.656 0l3-3a4 4 0 00-5.656-5.656l-1.5 1.5a1 1 0 101.414 1.414l1.5-1.5zm-5 5a2 2 0 012.828 0 1 1 0 101.414-1.414 4 4 0 00-5.656 0l-3 3a4 4 0 105.656 5.656l1.5-1.5a1 1 0 10-1.414-1.414l-1.5 1.5a2 2 0 11-2.828-2.828l3-3z"/>
+                </svg>
+              </button>
+
+              <button (click)="insertTable()" class="toolbar-btn" title="Insertar tabla">
+                <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 3h14a1 1 0 011 1v12a1 1 0 01-1 1H3a1 1 0 01-1-1V4a1 1 0 011-1zm1 2v3h5V5H4zm7 0v3h5V5h-5zM4 10v3h5v-3H4zm7 0v3h5v-3h-5zM4 15v1h5v-1H4zm7 0v1h5v-1h-5z"/>
+                </svg>
+              </button>
+
+              <div class="h-6 w-px bg-slate-300"></div>
+
+              <!-- Headings -->
+              <button (click)="insertHeading(1)" class="toolbar-btn px-3" title="Título 1">
+                <span class="font-bold text-sm">H1</span>
+              </button>
+
+              <button (click)="insertHeading(2)" class="toolbar-btn px-3" title="Título 2">
+                <span class="font-bold text-sm">H2</span>
+              </button>
+
+              <button (click)="insertHeading(3)" class="toolbar-btn px-3" title="Título 3">
+                <span class="font-bold text-sm">H3</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Content Editor -->
+          <div class="p-8 overflow-y-auto bg-slate-50" style="max-height: 600px;">
+            <div class="max-w-4xl mx-auto bg-white shadow-lg">
+              <div
+                #contentEditor
+                contenteditable="true"
+                (input)="onContentChange($event)"
+                class="document-content p-16 min-h-96 focus:outline-none"
+                [innerHTML]="htmlContent">
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer Info -->
+          <div class="bg-slate-50 border-t border-slate-200 px-6 py-3">
+            <p class="text-xs text-slate-500 text-center">
+              Utiliza la barra de herramientas para dar formato al documento. Presiona <kbd class="px-2 py-1 bg-slate-200 rounded text-slate-700 font-mono text-xs">Ctrl+P</kbd> para ver el HTML en consola.
+            </p>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Loading Indicator -->
+    @if (isLoading) {
+      <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-lg p-8 flex flex-col items-center space-y-4">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p class="text-slate-700 font-medium">Procesando documento...</p>
+        </div>
+      </div>
+    }
+  </div>
+</div>

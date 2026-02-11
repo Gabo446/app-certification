@@ -1,0 +1,971 @@
+<!-- Modal Editar Empresa -->
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" (click)="closeEditModal()"></div>
+
+    <div class="inline-block align-bottom bg-background rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6">
+      <div class="sm:flex sm:items-start">
+        <div class="w-full">
+          <h3 class="text-lg leading-6 font-medium text-foreground mb-4">
+            Editar Empresa
+          </h3>
+
+          <form [formGroup]="editForm" class="space-y-6">
+            <!-- Información Básica -->
+            <div class="border-b border-border pb-6">
+              <h4 class="text-md font-medium text-foreground mb-4">Información Básica</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Razón Social -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="edit-businessName"
+                    formControlName="businessName"
+                    [ngClass]="{ 'border-red-500': editForm.get('businessName')?.invalid && editForm.get('businessName')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Razón Social">
+                  <label for="edit-businessName" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Razón Social *
+                  </label>
+                  <div *ngIf="editForm.get('businessName')?.invalid && editForm.get('businessName')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('businessName')?.errors?.['required']">La razón social es requerida</span>
+                    <span *ngIf="editForm.get('businessName')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+                  </div>
+                </div>
+
+                <!-- Nombre Comercial -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="edit-tradeName"
+                    formControlName="tradeName"
+                    [ngClass]="{ 'border-red-500': editForm.get('tradeName')?.invalid && editForm.get('tradeName')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Nombre Comercial">
+                  <label for="edit-tradeName" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Nombre Comercial *
+                  </label>
+                  <div *ngIf="editForm.get('tradeName')?.invalid && editForm.get('tradeName')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('tradeName')?.errors?.['required']">El nombre comercial es requerido</span>
+                    <span *ngIf="editForm.get('tradeName')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+                  </div>
+                </div>
+
+                <!-- RUT -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="edit-rut"
+                    formControlName="rut"
+                    (input)="formatRut($event, editForm)"
+                    [ngClass]="{ 'border-red-500': editForm.get('rut')?.invalid && editForm.get('rut')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="RUT">
+                  <label for="edit-rut" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    RUT (12.345.678-9) *
+                  </label>
+                  <div *ngIf="editForm.get('rut')?.invalid && editForm.get('rut')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('rut')?.errors?.['required']">El RUT es requerido</span>
+                    <span *ngIf="editForm.get('rut')?.errors?.['invalidRut']">RUT inválido</span>
+                  </div>
+                </div>
+
+                <!-- Tipo de Empresa -->
+                <div class="relative">
+                  <select
+                    id="edit-businessType"
+                    formControlName="businessType"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option *ngFor="let type of businessTypes" [value]="type">{{ type }}</option>
+                  </select>
+                  <label for="edit-businessType" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Tipo de Empresa *
+                  </label>
+                </div>
+
+                <!-- Sector -->
+                <div class="relative">
+                  <select
+                    id="edit-businessSector"
+                    formControlName="businessSector"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option *ngFor="let sector of businessSectors" [value]="sector">{{ sector }}</option>
+                  </select>
+                  <label for="edit-businessSector" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Sector Empresarial *
+                  </label>
+                </div>
+
+                <!-- Año Fundación -->
+                <div class="relative">
+                  <input
+                    type="number"
+                    id="edit-foundedYear"
+                    formControlName="foundedYear"
+                    min="1800"
+                    [max]="now.getFullYear()"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Año Fundación">
+                  <label for="edit-foundedYear" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Año Fundación
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div class="border-b border-border pb-6">
+              <h4 class="text-md font-medium text-foreground mb-4">Información de Contacto</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Email -->
+                <div class="relative">
+                  <input
+                    type="email"
+                    id="edit-email"
+                    formControlName="email"
+                    [ngClass]="{ 'border-red-500': editForm.get('email')?.invalid && editForm.get('email')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Email">
+                  <label for="edit-email" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Email *
+                  </label>
+                  <div *ngIf="editForm.get('email')?.invalid && editForm.get('email')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('email')?.errors?.['required']">El email es requerido</span>
+                    <span *ngIf="editForm.get('email')?.errors?.['email']">Email inválido</span>
+                  </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="relative">
+                  <input
+                    type="tel"
+                    id="edit-phone"
+                    formControlName="phone"
+                    [ngClass]="{ 'border-red-500': editForm.get('phone')?.invalid && editForm.get('phone')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Teléfono">
+                  <label for="edit-phone" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Teléfono *
+                  </label>
+                  <div *ngIf="editForm.get('phone')?.invalid && editForm.get('phone')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('phone')?.errors?.['required']">El teléfono es requerido</span>
+                    <span *ngIf="editForm.get('phone')?.errors?.['minlength']">Mínimo 8 caracteres</span>
+                  </div>
+                </div>
+
+                <!-- Sitio Web -->
+                <div class="relative md:col-span-2">
+                  <input
+                    type="url"
+                    id="edit-website"
+                    formControlName="website"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Sitio Web">
+                  <label for="edit-website" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Sitio Web
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="border-b border-border pb-6">
+              <h4 class="text-md font-medium text-foreground mb-4">Dirección</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dirección -->
+                <div class="relative md:col-span-2">
+                  <input
+                    type="text"
+                    id="edit-address"
+                    formControlName="address"
+                    [ngClass]="{ 'border-red-500': editForm.get('address')?.invalid && editForm.get('address')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Dirección">
+                  <label for="edit-address" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Dirección *
+                  </label>
+                  <div *ngIf="editForm.get('address')?.invalid && editForm.get('address')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('address')?.errors?.['required']">La dirección es requerida</span>
+                  </div>
+                </div>
+
+                <!-- Ciudad -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="edit-city"
+                    formControlName="city"
+                    [ngClass]="{ 'border-red-500': editForm.get('city')?.invalid && editForm.get('city')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Ciudad">
+                  <label for="edit-city" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Ciudad *
+                  </label>
+                  <div *ngIf="editForm.get('city')?.invalid && editForm.get('city')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('city')?.errors?.['required']">La ciudad es requerida</span>
+                  </div>
+                </div>
+
+                <!-- Región -->
+                <div class="relative">
+                  <select
+                    id="edit-region"
+                    formControlName="region"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+                  </select>
+                  <label for="edit-region" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Región *
+                  </label>
+                </div>
+
+                <!-- Código Postal -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="edit-postalCode"
+                    formControlName="postalCode"
+                    [ngClass]="{ 'border-red-500': editForm.get('postalCode')?.invalid && editForm.get('postalCode')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Código Postal">
+                  <label for="edit-postalCode" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Código Postal *
+                  </label>
+                  <div *ngIf="editForm.get('postalCode')?.invalid && editForm.get('postalCode')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="editForm.get('postalCode')?.errors?.['required']">El código postal es requerido</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información Adicional -->
+            <div>
+              <h4 class="text-md font-medium text-foreground mb-4">Información Adicional</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Número de Empleados -->
+                <div class="relative">
+                  <input
+                    type="number"
+                    id="edit-employeeCount"
+                    formControlName="employeeCount"
+                    min="1"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Número de Empleados">
+                  <label for="edit-employeeCount" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Número de Empleados *
+                  </label>
+                </div>
+
+                <!-- Facturación Anual -->
+                <div class="relative">
+                  <input
+                    type="number"
+                    id="edit-annualRevenue"
+                    formControlName="annualRevenue"
+                    min="0"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Facturación Anual">
+                  <label for="edit-annualRevenue" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Facturación Anual (CLP)
+                  </label>
+                </div>
+
+                <!-- Descripción -->
+                <div class="relative md:col-span-2">
+                  <textarea
+                    id="edit-description"
+                    formControlName="description"
+                    rows="3"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Descripción"></textarea>
+                  <label for="edit-description" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Descripción
+                  </label>
+                </div>
+
+                <!-- Estado -->
+                <div class="flex items-center md:col-span-2">
+                  <input
+                    type="checkbox"
+                    id="edit-isActive"
+                    formControlName="isActive"
+                    class="h-4 w-4 text-primary focus:ring-primary border-border rounded">
+                  <label for="edit-isActive" class="ml-2 block text-sm text-foreground">
+                    Empresa activa
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <app-button
+          impact="bold"
+          tone="primary"
+          shape="rounded"
+          size="medium"
+          (click)="updateCompany()"
+          [disabled]="isUpdating || editForm.invalid"
+          class="w-full sm:ml-3 sm:w-auto">
+          {{ isUpdating ? 'Actualizando...' : 'Actualizar Empresa' }}
+        </app-button>
+        <app-button
+          impact="none"
+          tone="light"
+          shape="rounded"
+          size="medium"
+          (click)="closeEditModal()"
+          class="mt-3 w-full sm:mt-0 sm:w-auto">
+          Cancelar
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar Empresa -->
+<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" (click)="closeDeleteModal()"></div>
+
+    <div class="inline-block align-bottom bg-background rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+      <div class="sm:flex sm:items-start">
+        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+          <svg-icon src="assets/icons/heroicons/outline/exclamation-triangle.svg" [svgClass]="'h-6 w-6 text-red-600'"></svg-icon>
+        </div>
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+          <h3 class="text-lg leading-6 font-medium text-foreground">
+            Eliminar Empresa
+          </h3>
+          <div class="mt-2">
+            <p class="text-sm text-muted-foreground">
+              ¿Estás seguro de que deseas eliminar la empresa <strong>{{ selectedCompany ? selectedCompany.businessName : '' }}</strong>?
+              Esta acción no se puede deshacer.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <app-button
+          impact="bold"
+          tone="danger"
+          shape="rounded"
+          size="medium"
+          (click)="deleteCompany()"
+          [disabled]="isDeleting"
+          class="w-full sm:ml-3 sm:w-auto">
+          {{ isDeleting ? 'Eliminando...' : 'Eliminar' }}
+        </app-button>
+        <app-button
+          impact="none"
+          tone="light"
+          shape="rounded"
+          size="medium"
+          (click)="closeDeleteModal()"
+          class="mt-3 w-full sm:mt-0 sm:w-auto">
+          Cancelar
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div><div class="flex h-screen w-full overflow-hidden">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <div class="flex grow flex-col content-start overflow-hidden bg-card">
+    <!-- Header -->
+    <app-navbar></app-navbar>
+
+    <!-- Main content -->
+    <div
+      id="main-content"
+      class="scrollbar-thumb-rounded scrollbar-track-rounded grow overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted">
+      <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
+
+        <!-- Título y botón crear -->
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-foreground">Gestión de Empresas</h1>
+            <p class="text-muted-foreground">Administra las empresas del sistema</p>
+          </div>
+          <app-button
+            impact="bold"
+            tone="primary"
+            shape="rounded"
+            size="medium"
+            (click)="openCreateModal()">
+            <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
+            Crear Empresa
+          </app-button>
+        </div>
+
+        <!-- Filtros y búsqueda -->
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-5">
+          <!-- Búsqueda -->
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Buscar empresas..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 pl-10 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+            <svg-icon
+              src="assets/icons/heroicons/outline/magnifying-glass.svg"
+              [svgClass]="'absolute left-3 top-2.5 h-5 w-5 text-muted-foreground'">
+            </svg-icon>
+          </div>
+
+          <!-- Filtro por sector -->
+          <div>
+            <select
+              [(ngModel)]="sectorFilter"
+              (ngModelChange)="onFilterChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="">Todos los sectores</option>
+              <option *ngFor="let sector of businessSectors" [value]="sector">{{ sector }}</option>
+            </select>
+          </div>
+
+          <!-- Filtro por tipo -->
+          <div>
+            <select
+              [(ngModel)]="typeFilter"
+              (ngModelChange)="onFilterChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="">Todos los tipos</option>
+              <option *ngFor="let type of businessTypes" [value]="type">{{ type }}</option>
+            </select>
+          </div>
+
+          <!-- Filtro por estado -->
+          <div>
+            <select
+              [(ngModel)]="statusFilter"
+              (ngModelChange)="onFilterChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20">
+              <option value="">Todos los estados</option>
+              <option value="true">Activa</option>
+              <option value="false">Inactiva</option>
+            </select>
+          </div>
+
+          <!-- Items por página -->
+          <div>
+            <select
+              [(ngModel)]="itemsPerPage"
+              (ngModelChange)="changePage(1)"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="10">10 por página</option>
+              <option value="25">25 por página</option>
+              <option value="50">50 por página</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="flex justify-center py-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+
+        <!-- Tabla de empresas -->
+        <div *ngIf="!isLoading" class="rounded-lg border border-border bg-card shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="border-b border-border bg-muted/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Empresa
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  RUT
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Contacto
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Sector
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Tipo
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Empleados
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Estado
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Acciones
+                </th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+              <tr *ngFor="let company of paginatedCompanies" class="hover:bg-muted/50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                        <span class="text-sm font-medium text-primary">
+                          {{ (company.businessName | slice:0:2).toUpperCase() }}
+                        </span>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-foreground">
+                        {{ company.businessName }}
+                      </div>
+                      <div class="text-sm text-muted-foreground">
+                        {{ company.tradeName }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                  {{ company.rut }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-foreground">{{ company.email }}</div>
+                  <div class="text-sm text-muted-foreground">{{ company.phone }}</div>
+                  <div class="text-sm text-muted-foreground">{{ company.city }}, {{ company.region }}</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
+                      {{ company.businessSector }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-purple-100 text-purple-800">
+                      {{ company.businessType }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                  {{ formatEmployeeCount(company.employeeCount) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
+                          [ngClass]="{
+                            'bg-green-100 text-green-800': company.isActive,
+                            'bg-gray-100 text-gray-800': !company.isActive
+                          }">
+                      {{ company.isActive ? 'Activa' : 'Inactiva' }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex justify-end space-x-2">
+                    <button
+                      (click)="openEditModal(company)"
+                      class="text-blue-600 hover:text-blue-900 p-1 rounded-md hover:bg-blue-50">
+                      Editar
+                    </button>
+                    <button
+                      (click)="openDeleteModal(company)"
+                      class="text-red-600 hover:text-red-900 p-1 rounded-md hover:bg-red-50">
+                      Eliminar
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty state -->
+          <div *ngIf="companiesFiltered$.value.length === 0" class="text-center py-8">
+            <svg-icon src="assets/icons/heroicons/outline/building-office.svg" [svgClass]="'mx-auto h-12 w-12 text-muted-foreground'"></svg-icon>
+            <h3 class="mt-2 text-sm font-medium text-foreground">No hay empresas</h3>
+            <p class="mt-1 text-sm text-muted-foreground">Comienza creando tu primera empresa.</p>
+          </div>
+        </div>
+
+        <!-- Paginación -->
+        <div *ngIf="!isLoading && companiesFiltered$.value.length > 0" class="mt-6 flex items-center justify-between">
+          <div class="text-sm text-muted-foreground">
+            Mostrando {{ ((currentPage - 1) * itemsPerPage) + 1 }} a
+            {{ Math.min(currentPage * itemsPerPage, companiesFiltered$.value.length) }}
+            de {{ companiesFiltered$.value.length }} empresas
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button
+              (click)="previousPage()"
+              [disabled]="currentPage === 1"
+              class="px-3 py-1 rounded-md border border-border bg-background text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed">
+              Anterior
+            </button>
+
+            <span *ngFor="let page of [].constructor(totalPages); let i = index"
+                  class="px-3 py-1 rounded-md cursor-pointer"
+                  [ngClass]="{
+                    'bg-primary text-primary-foreground': currentPage === i + 1,
+                    'bg-background text-foreground hover:bg-muted border border-border': currentPage !== i + 1
+                  }"
+                  (click)="changePage(i + 1)">
+              {{ i + 1 }}
+            </span>
+
+            <button
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages"
+              class="px-3 py-1 rounded-md border border-border bg-background text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed">
+              Siguiente
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<!-- Modal Crear Empresa -->
+<div *ngIf="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" (click)="closeCreateModal()"></div>
+
+    <div class="inline-block align-bottom bg-background rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full sm:p-6">
+      <div class="sm:flex sm:items-start">
+        <div class="w-full">
+          <h3 class="text-lg leading-6 font-medium text-foreground mb-4">
+            Crear Nueva Empresa
+          </h3>
+
+          <form [formGroup]="companyForm" class="space-y-6">
+            <!-- Información Básica -->
+            <div class="border-b border-border pb-6">
+              <h4 class="text-md font-medium text-foreground mb-4">Información Básica</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Razón Social -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="create-businessName"
+                    formControlName="businessName"
+                    [ngClass]="{ 'border-red-500': companyForm.get('businessName')?.invalid && companyForm.get('businessName')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Razón Social">
+                  <label for="create-businessName" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Razón Social *
+                  </label>
+                  <div *ngIf="companyForm.get('businessName')?.invalid && companyForm.get('businessName')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('businessName')?.errors?.['required']">La razón social es requerida</span>
+                    <span *ngIf="companyForm.get('businessName')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+                  </div>
+                </div>
+
+                <!-- Nombre Comercial -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="create-tradeName"
+                    formControlName="tradeName"
+                    [ngClass]="{ 'border-red-500': companyForm.get('tradeName')?.invalid && companyForm.get('tradeName')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Nombre Comercial">
+                  <label for="create-tradeName" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Nombre Comercial *
+                  </label>
+                  <div *ngIf="companyForm.get('tradeName')?.invalid && companyForm.get('tradeName')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('tradeName')?.errors?.['required']">El nombre comercial es requerido</span>
+                    <span *ngIf="companyForm.get('tradeName')?.errors?.['minlength']">Mínimo 2 caracteres</span>
+                  </div>
+                </div>
+
+                <!-- RUT -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="create-rut"
+                    formControlName="rut"
+                    (input)="formatRut($event, companyForm)"
+                    [ngClass]="{ 'border-red-500': companyForm.get('rut')?.invalid && companyForm.get('rut')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="RUT">
+                  <label for="create-rut" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    RUT (12.345.678-9) *
+                  </label>
+                  <div *ngIf="companyForm.get('rut')?.invalid && companyForm.get('rut')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('rut')?.errors?.['required']">El RUT es requerido</span>
+                    <span *ngIf="companyForm.get('rut')?.errors?.['invalidRut']">RUT inválido</span>
+                  </div>
+                </div>
+
+                <!-- Tipo de Empresa -->
+                <div class="relative">
+                  <select
+                    id="create-businessType"
+                    formControlName="businessType"
+                    [ngClass]="{ 'border-red-500': companyForm.get('businessType')?.invalid && companyForm.get('businessType')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option value="">Seleccione tipo</option>
+                    <option *ngFor="let type of businessTypes" [value]="type">{{ type }}</option>
+                  </select>
+                  <label for="create-businessType" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Tipo de Empresa *
+                  </label>
+                  <div *ngIf="companyForm.get('businessType')?.invalid && companyForm.get('businessType')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('businessType')?.errors?.['required']">El tipo de empresa es requerido</span>
+                  </div>
+                </div>
+
+                <!-- Sector -->
+                <div class="relative">
+                  <select
+                    id="create-businessSector"
+                    formControlName="businessSector"
+                    [ngClass]="{ 'border-red-500': companyForm.get('businessSector')?.invalid && companyForm.get('businessSector')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option value="">Seleccione sector</option>
+                    <option *ngFor="let sector of businessSectors" [value]="sector">{{ sector }}</option>
+                  </select>
+                  <label for="create-businessSector" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Sector Empresarial *
+                  </label>
+                  <div *ngIf="companyForm.get('businessSector')?.invalid && companyForm.get('businessSector')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('businessSector')?.errors?.['required']">El sector empresarial es requerido</span>
+                  </div>
+                </div>
+
+                <!-- Año Fundación -->
+                <div class="relative">
+                  <input
+                    type="number"
+                    id="create-foundedYear"
+                    formControlName="foundedYear"
+                    min="1800"
+                    [max]="now.getFullYear()"
+                    [ngClass]="{ 'border-red-500': companyForm.get('foundedYear')?.invalid && companyForm.get('foundedYear')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Año Fundación">
+                  <label for="create-foundedYear" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Año Fundación
+                  </label>
+                  <div *ngIf="companyForm.get('foundedYear')?.invalid && companyForm.get('foundedYear')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('foundedYear')?.errors?.['invalidYear']">Año inválido</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información de Contacto -->
+            <div class="border-b border-border pb-6">
+              <h4 class="text-md font-medium text-foreground mb-4">Información de Contacto</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Email -->
+                <div class="relative">
+                  <input
+                    type="email"
+                    id="create-email"
+                    formControlName="email"
+                    [ngClass]="{ 'border-red-500': companyForm.get('email')?.invalid && companyForm.get('email')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Email">
+                  <label for="create-email" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Email *
+                  </label>
+                  <div *ngIf="companyForm.get('email')?.invalid && companyForm.get('email')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('email')?.errors?.['required']">El email es requerido</span>
+                    <span *ngIf="companyForm.get('email')?.errors?.['email']">Email inválido</span>
+                  </div>
+                </div>
+
+                <!-- Teléfono -->
+                <div class="relative">
+                  <input
+                    type="tel"
+                    id="create-phone"
+                    formControlName="phone"
+                    [ngClass]="{ 'border-red-500': companyForm.get('phone')?.invalid && companyForm.get('phone')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Teléfono">
+                  <label for="create-phone" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Teléfono *
+                  </label>
+                  <div *ngIf="companyForm.get('phone')?.invalid && companyForm.get('phone')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('phone')?.errors?.['required']">El teléfono es requerido</span>
+                    <span *ngIf="companyForm.get('phone')?.errors?.['minlength']">Mínimo 8 caracteres</span>
+                  </div>
+                </div>
+
+                <!-- Sitio Web -->
+                <div class="relative md:col-span-2">
+                  <input
+                    type="url"
+                    id="create-website"
+                    formControlName="website"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Sitio Web">
+                  <label for="create-website" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Sitio Web
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Dirección -->
+            <div class="border-b border-border pb-6">
+              <h4 class="text-md font-medium text-foreground mb-4">Dirección</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Dirección -->
+                <div class="relative md:col-span-2">
+                  <input
+                    type="text"
+                    id="create-address"
+                    formControlName="address"
+                    [ngClass]="{ 'border-red-500': companyForm.get('address')?.invalid && companyForm.get('address')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Dirección">
+                  <label for="create-address" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Dirección *
+                  </label>
+                  <div *ngIf="companyForm.get('address')?.invalid && companyForm.get('address')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('address')?.errors?.['required']">La dirección es requerida</span>
+                  </div>
+                </div>
+
+                <!-- Ciudad -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="create-city"
+                    formControlName="city"
+                    [ngClass]="{ 'border-red-500': companyForm.get('city')?.invalid && companyForm.get('city')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Ciudad">
+                  <label for="create-city" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Ciudad *
+                  </label>
+                  <div *ngIf="companyForm.get('city')?.invalid && companyForm.get('city')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('city')?.errors?.['required']">La ciudad es requerida</span>
+                  </div>
+                </div>
+
+                <!-- Región -->
+                <div class="relative">
+                  <select
+                    id="create-region"
+                    formControlName="region"
+                    [ngClass]="{ 'border-red-500': companyForm.get('region')?.invalid && companyForm.get('region')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                    <option value="">Seleccione región</option>
+                    <option *ngFor="let region of regions" [value]="region">{{ region }}</option>
+                  </select>
+                  <label for="create-region" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Región *
+                  </label>
+                  <div *ngIf="companyForm.get('region')?.invalid && companyForm.get('region')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('region')?.errors?.['required']">La región es requerida</span>
+                  </div>
+                </div>
+
+                <!-- Código Postal -->
+                <div class="relative">
+                  <input
+                    type="text"
+                    id="create-postalCode"
+                    formControlName="postalCode"
+                    [ngClass]="{ 'border-red-500': companyForm.get('postalCode')?.invalid && companyForm.get('postalCode')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Código Postal">
+                  <label for="create-postalCode" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Código Postal *
+                  </label>
+                  <div *ngIf="companyForm.get('postalCode')?.invalid && companyForm.get('postalCode')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('postalCode')?.errors?.['required']">El código postal es requerido</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Información Adicional -->
+            <div>
+              <h4 class="text-md font-medium text-foreground mb-4">Información Adicional</h4>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Número de Empleados -->
+                <div class="relative">
+                  <input
+                    type="number"
+                    id="create-employeeCount"
+                    formControlName="employeeCount"
+                    min="1"
+                    [ngClass]="{ 'border-red-500': companyForm.get('employeeCount')?.invalid && companyForm.get('employeeCount')?.touched }"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Número de Empleados">
+                  <label for="create-employeeCount" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Número de Empleados *
+                  </label>
+                  <div *ngIf="companyForm.get('employeeCount')?.invalid && companyForm.get('employeeCount')?.touched" class="mt-1 text-xs text-red-600">
+                    <span *ngIf="companyForm.get('employeeCount')?.errors?.['required']">El número de empleados es requerido</span>
+                    <span *ngIf="companyForm.get('employeeCount')?.errors?.['min']">Debe ser mayor a 0</span>
+                  </div>
+                </div>
+
+                <!-- Facturación Anual -->
+                <div class="relative">
+                  <input
+                    type="number"
+                    id="create-annualRevenue"
+                    formControlName="annualRevenue"
+                    min="0"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Facturación Anual">
+                  <label for="create-annualRevenue" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Facturación Anual (CLP)
+                  </label>
+                </div>
+
+                <!-- Descripción -->
+                <div class="relative md:col-span-2">
+                  <textarea
+                    id="create-description"
+                    formControlName="description"
+                    rows="3"
+                    class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    placeholder="Descripción"></textarea>
+                  <label for="create-description" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                    Descripción
+                  </label>
+                </div>
+
+                <!-- Estado -->
+                <div class="flex items-center md:col-span-2">
+                  <input
+                    type="checkbox"
+                    id="create-isActive"
+                    formControlName="isActive"
+                    class="h-4 w-4 text-primary focus:ring-primary border-border rounded">
+                  <label for="create-isActive" class="ml-2 block text-sm text-foreground">
+                    Empresa activa
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <app-button
+          impact="bold"
+          tone="primary"
+          shape="rounded"
+          size="medium"
+          (click)="createCompany()"
+          [disabled]="isCreating || companyForm.invalid"
+          class="w-full sm:ml-3 sm:w-auto">
+          {{ isCreating ? 'Creando...' : 'Crear Empresa' }}
+        </app-button>
+        <app-button
+          impact="none"
+          tone="light"
+          shape="rounded"
+          size="medium"
+          (click)="closeCreateModal()"
+          class="mt-3 w-full sm:mt-0 sm:w-auto">
+          Cancelar
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div>

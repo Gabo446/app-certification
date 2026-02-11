@@ -1,0 +1,527 @@
+<div class="flex h-screen w-full overflow-hidden">
+  <!-- Sidebar -->
+  <app-sidebar></app-sidebar>
+
+  <div class="flex grow flex-col content-start overflow-hidden bg-card">
+    <!-- Header -->
+    <app-navbar></app-navbar>
+
+    <!-- Main content -->
+    <div
+      id="main-content"
+      class="scrollbar-thumb-rounded scrollbar-track-rounded grow overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted">
+      <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
+
+        <!-- Title and create button -->
+        <div class="mb-6 flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl font-bold text-foreground">ProfileDto Management</h1>
+            <p class="text-muted-foreground">Manage user profiles and organizational structure</p>
+          </div>
+          <app-button
+            impact="bold"
+            tone="primary"
+            shape="rounded"
+            size="medium"
+            (click)="openCreateModal()">
+            <svg-icon src="assets/icons/heroicons/outline/plus.svg" [svgClass]="'h-5 w-5 mr-2'"></svg-icon>
+            Create ProfileDto
+          </app-button>
+        </div>
+
+        <!-- Filters and search -->
+        <div class="mb-6 grid grid-cols-1 gap-4 md:grid-cols-5">
+          <!-- Search -->
+          <div class="relative">
+            <input
+              type="text"
+              placeholder="Search profiles..."
+              [(ngModel)]="searchTerm"
+              (ngModelChange)="onSearchChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 pl-10 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+            <svg-icon
+              src="assets/icons/heroicons/outline/magnifying-glass.svg"
+              [svgClass]="'absolute left-3 top-2.5 h-5 w-5 text-muted-foreground'">
+            </svg-icon>
+          </div>
+
+          <!-- Department filter -->
+          <div>
+            <select
+              [(ngModel)]="departmentFilter"
+              (ngModelChange)="onFilterChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="">All departments</option>
+              <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+            </select>
+          </div>
+
+          <!-- Organization filter -->
+          <div>
+            <input
+              type="text"
+              placeholder="Filter by organization..."
+              [(ngModel)]="organizationFilter"
+              (ngModelChange)="onFilterChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+          </div>
+
+          <!-- Status filter -->
+          <div>
+            <select
+              [(ngModel)]="statusFilter"
+              (ngModelChange)="onFilterChange()"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:ring-2 focus:ring-primary/20">
+              <option value="">All statuses</option>
+              <option value="true">Active</option>
+              <option value="false">Inactive</option>
+            </select>
+          </div>
+
+          <!-- Items per page -->
+          <div>
+            <select
+              [(ngModel)]="itemsPerPage"
+              (ngModelChange)="changePage(1)"
+              class="w-full rounded-lg border border-border bg-background px-4 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+              <option value="10">10 per page</option>
+              <option value="25">25 per page</option>
+              <option value="50">50 per page</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Loading -->
+        <div *ngIf="isLoading" class="flex justify-center py-8">
+          <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
+
+        <!-- Profiles table -->
+        <div *ngIf="!isLoading" class="rounded-lg border border-border bg-card shadow-sm">
+          <div class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="border-b border-border bg-muted/50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Job Title
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Department
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Manager
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Organization
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Status
+                </th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Created Date
+                </th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Actions
+                </th>
+              </tr>
+              </thead>
+              <tbody class="divide-y divide-border">
+              <tr *ngFor="let profile of paginatedProfiles" class="hover:bg-muted/50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <div class="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
+                      <svg-icon src="assets/icons/heroicons/outline/briefcase.svg" [svgClass]="'h-5 w-5 text-primary'"></svg-icon>
+                    </div>
+                    <div class="ml-4">
+                      <div class="text-sm font-medium text-foreground">
+                        {{ profile.jobTitle }}
+                      </div>
+                    </div>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                  <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-blue-100 text-blue-800">
+                    {{ profile.department }}
+                  </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                  {{ profile.managerName }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-foreground">
+                  {{ profile.organization }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex rounded-full px-2 py-1 text-xs font-semibold"
+                          [ngClass]="{
+                            'bg-green-100 text-green-800': profile.isActive,
+                            'bg-gray-100 text-gray-800': !profile.isActive
+                          }">
+                      {{ profile.isActive ? 'Active' : 'Inactive' }}
+                    </span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
+                  {{ formatDate(profile.createdAt) }}
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <div class="flex justify-end space-x-2">
+                    <button
+                      (click)="openEditModal(profile)"
+                      class="text-blue-600 hover:text-blue-900 p-1 rounded-md hover:bg-blue-50">
+                      Edit
+                    </button>
+                    <button
+                      (click)="openDeleteModal(profile)"
+                      class="text-red-600 hover:text-red-900 p-1 rounded-md hover:bg-red-50">
+                      Delete
+                    </button>
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Empty state -->
+          <div *ngIf="profilesFiltered$.value.length === 0" class="text-center py-8">
+            <svg-icon src="assets/icons/heroicons/outline/briefcase.svg" [svgClass]="'mx-auto h-12 w-12 text-muted-foreground'"></svg-icon>
+            <h3 class="mt-2 text-sm font-medium text-foreground">No profiles found</h3>
+            <p class="mt-1 text-sm text-muted-foreground">Start by creating your first profile.</p>
+          </div>
+        </div>
+
+        <!-- Pagination -->
+        <div *ngIf="!isLoading && profilesFiltered$.value.length > 0" class="mt-6 flex items-center justify-between">
+          <div class="text-sm text-muted-foreground">
+            Showing {{ ((currentPage - 1) * itemsPerPage) + 1 }} to
+            {{ Math.min(currentPage * itemsPerPage, profilesFiltered$.value.length) }}
+            of {{ profilesFiltered$.value.length }} profiles
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button
+              (click)="previousPage()"
+              [disabled]="currentPage === 1"
+              class="px-3 py-1 rounded-md border border-border bg-background text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed">
+              Previous
+            </button>
+
+            <span *ngFor="let page of [].constructor(totalPages); let i = index"
+                  class="px-3 py-1 rounded-md cursor-pointer"
+                  [ngClass]="{
+                    'bg-primary text-primary-foreground': currentPage === i + 1,
+                    'bg-background text-foreground hover:bg-muted border border-border': currentPage !== i + 1
+                  }"
+                  (click)="changePage(i + 1)">
+              {{ i + 1 }}
+            </span>
+
+            <button
+              (click)="nextPage()"
+              [disabled]="currentPage === totalPages"
+              class="px-3 py-1 rounded-md border border-border bg-background text-foreground hover:bg-muted disabled:opacity-50 disabled:cursor-not-allowed">
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <app-footer></app-footer>
+  </div>
+</div>
+
+<!-- Create ProfileDto Modal -->
+<div *ngIf="showCreateModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" (click)="closeCreateModal()"></div>
+
+    <div class="inline-block align-bottom bg-background rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+      <div class="sm:flex sm:items-start">
+        <div class="w-full">
+          <h3 class="text-lg leading-6 font-medium text-foreground mb-4">
+            Create New ProfileDto
+          </h3>
+
+          <form [formGroup]="profileForm" class="space-y-4">
+            <!-- Job Title -->
+            <div class="relative">
+              <input
+                type="text"
+                id="create-jobTitle"
+                formControlName="jobTitle"
+                [ngClass]="{ 'border-red-500': profileForm.get('jobTitle')?.invalid && profileForm.get('jobTitle')?.touched }"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                placeholder="Job Title">
+              <label for="create-jobTitle" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Job Title
+              </label>
+              <div *ngIf="profileForm.get('jobTitle')?.invalid && profileForm.get('jobTitle')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="profileForm.get('jobTitle')?.errors?.['required']">Job title is required</span>
+                <span *ngIf="profileForm.get('jobTitle')?.errors?.['minlength']">Minimum 2 characters</span>
+              </div>
+            </div>
+
+            <!-- Department -->
+            <div class="relative">
+              <select
+                id="create-department"
+                formControlName="department"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                <option value="">Select Department</option>
+                <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+              </select>
+              <label for="create-department" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Department
+              </label>
+              <div *ngIf="profileForm.get('department')?.invalid && profileForm.get('department')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="profileForm.get('department')?.errors?.['required']">Department is required</span>
+              </div>
+            </div>
+
+            <!-- Manager Name -->
+            <div class="relative">
+              <input
+                type="text"
+                id="create-managerName"
+                formControlName="managerName"
+                [ngClass]="{ 'border-red-500': profileForm.get('managerName')?.invalid && profileForm.get('managerName')?.touched }"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                placeholder="Manager Name">
+              <label for="create-managerName" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Manager Name
+              </label>
+              <div *ngIf="profileForm.get('managerName')?.invalid && profileForm.get('managerName')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="profileForm.get('managerName')?.errors?.['required']">Manager name is required</span>
+                <span *ngIf="profileForm.get('managerName')?.errors?.['minlength']">Minimum 2 characters</span>
+              </div>
+            </div>
+
+            <!-- Organization -->
+            <div class="relative">
+              <input
+                type="text"
+                id="create-organization"
+                formControlName="organization"
+                [ngClass]="{ 'border-red-500': profileForm.get('organization')?.invalid && profileForm.get('organization')?.touched }"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                placeholder="Organization">
+              <label for="create-organization" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Organization
+              </label>
+              <div *ngIf="profileForm.get('organization')?.invalid && profileForm.get('organization')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="profileForm.get('organization')?.errors?.['required']">Organization is required</span>
+                <span *ngIf="profileForm.get('organization')?.errors?.['minlength']">Minimum 2 characters</span>
+              </div>
+            </div>
+
+            <!-- Active Status -->
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="create-isActive"
+                formControlName="isActive"
+                class="h-4 w-4 text-primary focus:ring-primary border-border rounded">
+              <label for="create-isActive" class="ml-2 block text-sm text-foreground">
+                Active profile
+              </label>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <app-button
+          impact="bold"
+          tone="primary"
+          shape="rounded"
+          size="medium"
+          (click)="createProfile()"
+          [disabled]="isCreating || profileForm.invalid"
+          class="w-full sm:ml-3 sm:w-auto">
+          {{ isCreating ? 'Creating...' : 'Create ProfileDto' }}
+        </app-button>
+        <app-button
+          impact="none"
+          tone="light"
+          shape="rounded"
+          size="medium"
+          (click)="closeCreateModal()"
+          class="mt-3 w-full sm:mt-0 sm:w-auto">
+          Cancel
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit ProfileDto Modal -->
+<div *ngIf="showEditModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" (click)="closeEditModal()"></div>
+
+    <div class="inline-block align-bottom bg-background rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+      <div class="sm:flex sm:items-start">
+        <div class="w-full">
+          <h3 class="text-lg leading-6 font-medium text-foreground mb-4">
+            Edit ProfileDto
+          </h3>
+
+          <form [formGroup]="editForm" class="space-y-4">
+            <!-- Job Title -->
+            <div class="relative">
+              <input
+                type="text"
+                id="edit-jobTitle"
+                formControlName="jobTitle"
+                [ngClass]="{ 'border-red-500': editForm.get('jobTitle')?.invalid && editForm.get('jobTitle')?.touched }"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                placeholder="Job Title">
+              <label for="edit-jobTitle" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Job Title
+              </label>
+              <div *ngIf="editForm.get('jobTitle')?.invalid && editForm.get('jobTitle')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="editForm.get('jobTitle')?.errors?.['required']">Job title is required</span>
+                <span *ngIf="editForm.get('jobTitle')?.errors?.['minlength']">Minimum 2 characters</span>
+              </div>
+            </div>
+
+            <!-- Department -->
+            <div class="relative">
+              <select
+                id="edit-department"
+                formControlName="department"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20">
+                <option value="">Select Department</option>
+                <option *ngFor="let dept of departments" [value]="dept">{{ dept }}</option>
+              </select>
+              <label for="edit-department" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Department
+              </label>
+              <div *ngIf="editForm.get('department')?.invalid && editForm.get('department')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="editForm.get('department')?.errors?.['required']">Department is required</span>
+              </div>
+            </div>
+
+            <!-- Manager Name -->
+            <div class="relative">
+              <input
+                type="text"
+                id="edit-managerName"
+                formControlName="managerName"
+                [ngClass]="{ 'border-red-500': editForm.get('managerName')?.invalid && editForm.get('managerName')?.touched }"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                placeholder="Manager Name">
+              <label for="edit-managerName" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Manager Name
+              </label>
+              <div *ngIf="editForm.get('managerName')?.invalid && editForm.get('managerName')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="editForm.get('managerName')?.errors?.['required']">Manager name is required</span>
+                <span *ngIf="editForm.get('managerName')?.errors?.['minlength']">Minimum 2 characters</span>
+              </div>
+            </div>
+
+            <!-- Organization -->
+            <div class="relative">
+              <input
+                type="text"
+                id="edit-organization"
+                formControlName="organization"
+                [ngClass]="{ 'border-red-500': editForm.get('organization')?.invalid && editForm.get('organization')?.touched }"
+                class="peer block w-full rounded-lg border border-border bg-background px-3 py-2 text-foreground placeholder-transparent focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                placeholder="Organization">
+              <label for="edit-organization" class="absolute -top-2 left-2 bg-background px-1 text-xs text-muted-foreground">
+                Organization
+              </label>
+              <div *ngIf="editForm.get('organization')?.invalid && editForm.get('organization')?.touched" class="mt-1 text-xs text-red-600">
+                <span *ngIf="editForm.get('organization')?.errors?.['required']">Organization is required</span>
+                <span *ngIf="editForm.get('organization')?.errors?.['minlength']">Minimum 2 characters</span>
+              </div>
+            </div>
+
+            <!-- Active Status -->
+            <div class="flex items-center">
+              <input
+                type="checkbox"
+                id="edit-isActive"
+                formControlName="isActive"
+                class="h-4 w-4 text-primary focus:ring-primary border-border rounded">
+              <label for="edit-isActive" class="ml-2 block text-sm text-foreground">
+                Active profile
+              </label>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <app-button
+          impact="bold"
+          tone="primary"
+          shape="rounded"
+          size="medium"
+          (click)="updateProfile()"
+          [disabled]="isUpdating || editForm.invalid"
+          class="w-full sm:ml-3 sm:w-auto">
+          {{ isUpdating ? 'Updating...' : 'Update ProfileDto' }}
+        </app-button>
+        <app-button
+          impact="none"
+          tone="light"
+          shape="rounded"
+          size="medium"
+          (click)="closeEditModal()"
+          class="mt-3 w-full sm:mt-0 sm:w-auto">
+          Cancel
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete ProfileDto Modal -->
+<div *ngIf="showDeleteModal" class="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+  <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+    <div class="fixed inset-0 bg-black bg-opacity-50 transition-opacity" (click)="closeDeleteModal()"></div>
+
+    <div class="inline-block align-bottom bg-background rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
+      <div class="sm:flex sm:items-start">
+        <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+          <svg-icon src="assets/icons/heroicons/outline/exclamation-triangle.svg" [svgClass]="'h-6 w-6 text-red-600'"></svg-icon>
+        </div>
+        <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+          <h3 class="text-lg leading-6 font-medium text-foreground">
+            Delete ProfileDto
+          </h3>
+          <div class="mt-2">
+            <p class="text-sm text-muted-foreground">
+              Are you sure you want to delete the profile <strong>{{ selectedProfile?.jobTitle }}</strong> for <strong>{{ selectedProfile?.organization }}</strong>?
+              This action cannot be undone.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+        <app-button
+          impact="bold"
+          tone="danger"
+          shape="rounded"
+          size="medium"
+          (click)="deleteProfile()"
+          [disabled]="isDeleting"
+          class="w-full sm:ml-3 sm:w-auto">
+          {{ isDeleting ? 'Deleting...' : 'Delete' }}
+        </app-button>
+        <app-button
+          impact="none"
+          tone="light"
+          shape="rounded"
+          size="medium"
+          (click)="closeDeleteModal()"
+          class="mt-3 w-full sm:mt-0 sm:w-auto">
+          Cancel
+        </app-button>
+      </div>
+    </div>
+  </div>
+</div>
