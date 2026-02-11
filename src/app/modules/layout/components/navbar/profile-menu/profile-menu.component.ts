@@ -1,7 +1,6 @@
-import { animate, state, style, transition, trigger } from '@angular/animations';
 import { NgClass } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
@@ -12,28 +11,6 @@ import { AuthService } from '../../../../../core/guards/auth.service';
   templateUrl: './profile-menu.component.html',
   styleUrls: ['./profile-menu.component.css'],
   imports: [ClickOutsideDirective, NgClass, AngularSvgIconModule],
-  animations: [
-    trigger('openClose', [
-      state(
-        'open',
-        style({
-          opacity: 1,
-          transform: 'translateY(0)',
-          visibility: 'visible',
-        }),
-      ),
-      state(
-        'closed',
-        style({
-          opacity: 0,
-          transform: 'translateY(-20px)',
-          visibility: 'hidden',
-        }),
-      ),
-      transition('open => closed', [animate('0.2s')]),
-      transition('closed => open', [animate('0.2s')]),
-    ]),
-  ],
 })
 export class ProfileMenuComponent implements OnInit {
   public isOpen = false;
@@ -90,7 +67,6 @@ export class ProfileMenuComponent implements OnInit {
   constructor(public themeService: ThemeService, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
-    console.log(this.authService.isAuthenticated());
   }
 
   public toggleMenu(): void {

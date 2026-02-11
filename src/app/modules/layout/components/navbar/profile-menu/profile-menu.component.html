@@ -11,8 +11,8 @@
   </button>
   <!-- Dropdown -->
   <div
-    [@openClose]="isOpen ? 'open' : 'closed'"
-    class="bg-background shadow-custom border-muted absolute z-20 mt-2 w-60 origin-top-right transform rounded-md border border-dashed py-4 ring-1 ring-transparent ring-opacity-5 transition focus:outline-hidden ltr:right-0 rtl:left-0">
+    [ngClass]="isOpen ? 'menu-open' : 'menu-closed'"
+    class="menu-dropdown bg-background shadow-custom border-muted absolute z-20 mt-2 w-60 origin-top-right rounded-md border border-dashed py-4 ring-1 ring-transparent ring-opacity-5 focus:outline-hidden ltr:right-0 rtl:left-0">
     <div class="flext-row flex items-center px-4 pb-4">
       <div class="w-10 shrink-0">
         <img class="rounded-md" src="https://avatars.githubusercontent.com/u/12519008?v=4" alt="" />

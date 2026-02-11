@@ -1,0 +1,15 @@
+.menu-dropdown {
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+}
+
+.menu-open {
+  opacity: 1;
+  transform: translateY(0);
+  visibility: visible;
+}
+
+.menu-closed {
+  opacity: 0;
+  transform: translateY(-20px);
+  visibility: hidden;
+}
