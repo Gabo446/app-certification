@@ -1,4 +1,4 @@
-// auth.guard.ts
+// no-auth.guard.ts
 import { Injectable } from '@angular/core';
 import { CanActivate, CanActivateChild, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -9,7 +9,7 @@ import { Auth } from '@angular/fire/auth';
 @Injectable({
   providedIn: 'root',
 })
-export class AuthGuard implements CanActivate, CanActivateChild {
+export class NoAuthGuard implements CanActivate, CanActivateChild {
   constructor(private auth: Auth, private router: Router) {}
 
   canActivate(): Observable<boolean | UrlTree> {
@@ -24,9 +24,9 @@ export class AuthGuard implements CanActivate, CanActivateChild {
     return authState(this.auth).pipe(
       map((user) => {
         if (user) {
-          return true;
+          return this.router.createUrlTree(['/dashboard']);
         } else {
-          return this.router.createUrlTree(['/auth/sign-in']);
+          return true;
         }
       }),
     );
