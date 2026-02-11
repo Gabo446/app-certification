@@ -2,8 +2,8 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router, UrlTree } from '@angular/router';
 import { Observable } from 'rxjs';
-import { map, take } from 'rxjs/operators';
-import { authState, user } from '@angular/fire/auth';
+import { map } from 'rxjs/operators';
+import { authState } from '@angular/fire/auth';
 import { Auth } from '@angular/fire/auth';
 
 @Injectable({
@@ -14,7 +14,6 @@ export class AuthGuard implements CanActivate {
 
   canActivate(): Observable<boolean | UrlTree> {
     return authState(this.auth).pipe(
-      take(1),
       map((user) => {
         console.log('AuthGuard - currentUser:', user);
         if (user) {

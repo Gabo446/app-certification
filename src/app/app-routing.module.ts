@@ -1,13 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { provideFirebaseApp } from '@angular/fire/app';
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { provideFirestore } from '@angular/fire/firestore';
-import { environment } from '../environments/environment';
 import { AuthGuard } from './core/guards/auth.guard';
 
 const routes: Routes = [
+  {
+    path: '',
+    redirectTo: 'auth',
+    pathMatch: 'full',
+  },
+  {
+    path: '',
+    loadChildren: () => import('./modules/layout/layout.module').then(m => m.LayoutModule),
+  },
   {
     path: 'users-admin',
     canActivate: [AuthGuard],
@@ -38,10 +42,6 @@ const routes: Routes = [
       import('./modules/document-management/document-manager/document-manager.component').then(
         (m) => m.DocumentManagerComponent,
       ),
-  },
-  {
-    path: '',
-    loadChildren: () => import('./modules/auth/auth.module').then((m) => m.AuthModule),
   },
   {
     path: 'auth',
