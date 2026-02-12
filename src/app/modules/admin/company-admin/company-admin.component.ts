@@ -3,9 +3,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, A
 import { CommonModule } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { FooterComponent } from '../../layout/components/footer/footer.component';
-import { NavbarComponent } from '../../layout/components/navbar/navbar.component';
-import { SidebarComponent } from '../../layout/components/sidebar/sidebar.component';
 import { Observable, BehaviorSubject } from 'rxjs';
 import {
   Firestore,
@@ -21,30 +18,8 @@ import {
   Timestamp,
   orderBy
 } from '@angular/fire/firestore';
-
-interface Company {
-  id?: string;
-  businessName: string;
-  tradeName: string;
-  rut: string;
-  email: string;
-  phone: string;
-  address: string;
-  city: string;
-  region: string;
-  postalCode: string;
-  businessSector: string;
-  businessType: string; // SPA, LTDA, SA, etc.
-  website?: string;
-  description?: string;
-  isActive: boolean;
-  createdAt: any;
-  updatedAt: any;
-  employeeCount: number;
-  annualRevenue?: number;
-  foundedYear?: number;
-  taxId: string; // RUT formatted for tax purposes
-}
+import { companyDto } from '../../../shared/models/company.dto';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-companyDto-admin',
@@ -53,17 +28,14 @@ interface Company {
     FormsModule,
     ReactiveFormsModule,
     AngularSvgIconModule,
-    ButtonComponent,
-    SidebarComponent,
-    NavbarComponent,
-    FooterComponent
+    ButtonComponent
   ],
   templateUrl: './company-admin.component.html',
   styleUrl: './company-admin.component.css',
 })
 export class CompanyAdminComponent implements OnInit {
-  companies$: Observable<Company[]> | undefined;
-  companiesFiltered$ = new BehaviorSubject<Company[]>([]);
+  companies$: Observable<companyDto[]> | undefined;
+  companiesFiltered$ = new BehaviorSubject<companyDto[]>([]);
 
   // Forms
   companyForm!: FormGroup;
@@ -79,7 +51,7 @@ export class CompanyAdminComponent implements OnInit {
   isDeleting = false;
 
   // Selected companyDto
-  selectedCompany: Company | null = null;
+  selectedCompany: companyDto | null = null;
 
   // Filters and search
   searchTerm = '';
@@ -214,7 +186,7 @@ export class CompanyAdminComponent implements OnInit {
       orderBy(this.sortField, this.sortDirection as any)
     );
 
-    this.companies$ = collectionData(companiesQuery, { idField: 'id' }) as Observable<Company[]>;
+    this.companies$ = collectionData(companiesQuery, { idField: 'id' }) as Observable<companyDto[]>;
 
     this.companies$.subscribe(companies => {
       this.totalCompanies = companies.length;
@@ -223,7 +195,7 @@ export class CompanyAdminComponent implements OnInit {
     });
   }
 
-  applyFilters(companies: Company[]): void {
+  applyFilters(companies: companyDto[]): void {
     let filteredCompanies = companies;
 
     // Search term filter
@@ -328,7 +300,7 @@ export class CompanyAdminComponent implements OnInit {
       // Check if RUT already exists
       const rutExists = await this.checkRutExists(formData.rut);
       if (rutExists) {
-        alert('Error: El RUT ya está registrado');
+        toast.error('El RUT ya está registrado');
         return;
       }
 
@@ -336,7 +308,7 @@ export class CompanyAdminComponent implements OnInit {
       const companyId = doc(collection(this.firestore, 'companies')).id;
 
       // Create companyDto document
-      const companyData: Company = {
+      const companyData: companyDto = {
         id: companyId,
         businessName: formData.businessName.trim(),
         tradeName: formData.tradeName.trim(),
@@ -365,11 +337,11 @@ export class CompanyAdminComponent implements OnInit {
 
       this.closeCreateModal();
       this.companyForm.reset();
-      alert('Empresa creada exitosamente');
+      toast.success('Empresa creada exitosamente');
 
     } catch (error: any) {
       console.error('Error creating companyDto:', error);
-      alert(`Error: ${this.getErrorMessage(error)}`);
+      toast.error(this.getErrorMessage(error));
     } finally {
       this.isCreating = false;
     }
@@ -386,7 +358,7 @@ export class CompanyAdminComponent implements OnInit {
       if (formData.rut !== this.selectedCompany.rut) {
         const rutExists = await this.checkRutExists(formData.rut, this.selectedCompany.id);
         if (rutExists) {
-          alert('Error: El RUT ya está registrado por otra empresa');
+          toast.error('El RUT ya está registrado por otra empresa');
           return;
         }
       }
@@ -417,11 +389,11 @@ export class CompanyAdminComponent implements OnInit {
       await updateDoc(companyDocRef, updateData);
 
       this.closeEditModal();
-      alert('Empresa actualizada exitosamente');
+      toast.success('Empresa actualizada exitosamente');
 
     } catch (error: any) {
       console.error('Error updating companyDto:', error);
-      alert(`Error: ${this.getErrorMessage(error)}`);
+      toast.error(this.getErrorMessage(error));
     } finally {
       this.isUpdating = false;
     }
@@ -436,11 +408,11 @@ export class CompanyAdminComponent implements OnInit {
       await deleteDoc(companyDocRef);
 
       this.closeDeleteModal();
-      alert('Empresa eliminada exitosamente');
+      toast.success('Empresa eliminada exitosamente');
 
     } catch (error: any) {
       console.error('Error deleting companyDto:', error);
-      alert(`Error: ${this.getErrorMessage(error)}`);
+      toast.error(this.getErrorMessage(error));
     } finally {
       this.isDeleting = false;
     }
@@ -504,7 +476,7 @@ export class CompanyAdminComponent implements OnInit {
     this.companyForm.reset();
   }
 
-  openEditModal(company: Company): void {
+  openEditModal(company: companyDto): void {
     this.selectedCompany = company;
     this.showEditModal = true;
 
@@ -535,7 +507,7 @@ export class CompanyAdminComponent implements OnInit {
     this.editForm.reset();
   }
 
-  openDeleteModal(company: Company): void {
+  openDeleteModal(company: companyDto): void {
     this.selectedCompany = company;
     this.showDeleteModal = true;
   }
@@ -565,7 +537,7 @@ export class CompanyAdminComponent implements OnInit {
   }
 
   // Pagination
-  get paginatedCompanies(): Company[] {
+  get paginatedCompanies(): companyDto[] {
     const companies = this.companiesFiltered$.value;
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return companies.slice(startIndex, startIndex + this.itemsPerPage);

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Functions, httpsCallable } from '@angular/fire/functions';
-import { Observable, from, ObservedValueOf, BehaviorSubject } from 'rxjs';
+import { Observable, from, ObservedValueOf } from 'rxjs';
 import { HttpsCallableResult } from 'firebase/functions';
 import { collection, collectionData, Firestore, orderBy, query } from '@angular/fire/firestore';
 import { UserDto } from '../models/user.dto';
@@ -17,23 +17,6 @@ export interface UpdateUserData {
   isActive?: boolean;
 }
 
-interface Usuario {
-  id?: string;
-  uid: string;
-  email: string;
-  nombres: string;
-  apellidoPaterno: string;
-  apellidoMaterno: string;
-  rut: string;
-  fechaNacimiento: any;
-  role: string;
-  isActive: boolean;
-  createdAt: any;
-  lastLoginAt: any;
-  profileCompleted: boolean;
-}
-
-
 export interface UserAdminResponse {
   success: boolean;
   message: string;
@@ -44,7 +27,6 @@ export interface UserAdminResponse {
   providedIn: 'root'
 })
 export class UserAdminService {
-  private usuarios$ = new BehaviorSubject<Usuario[]>([]);
   sortField = 'createdAt';
   sortDirection = 'desc';
 

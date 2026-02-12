@@ -4,6 +4,7 @@ import { NgxFileDropModule, NgxFileDropEntry, FileSystemFileEntry } from 'ngx-fi
 import * as mammoth from 'mammoth';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, UnderlineType } from 'docx';
 import * as fileSaver from 'file-saver';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-word-editor',
@@ -87,7 +88,7 @@ export class WordEditorComponent {
     console.groupEnd();
 
     // También mostrar alerta visual
-    alert('✅ HTML impreso en consola (F12 para ver)');
+    toast.success('HTML impreso en consola (F12 para ver)');
   }
 
   // Formatear HTML para mejor visualización
@@ -113,7 +114,7 @@ export class WordEditorComponent {
           this.fileName = file.name.replace('.docx', '');
           this.readDocxFile(file);
         } else {
-          alert('Por favor, selecciona un archivo .docx válido');
+          toast.error('Por favor, selecciona un archivo .docx válido');
         }
       });
     }
@@ -152,7 +153,7 @@ export class WordEditorComponent {
       }
     } catch (error) {
       console.error('Error al leer el archivo:', error);
-      alert('Error al procesar el documento. Por favor, intenta con otro archivo.');
+      toast.error('Error al procesar el documento. Por favor, intenta con otro archivo.');
     } finally {
       this.isLoading = false;
     }
@@ -530,7 +531,7 @@ export class WordEditorComponent {
       fileSaver.saveAs(blob, `${this.fileName}_editado.docx`);
     } catch (error) {
       console.error('Error al generar el documento:', error);
-      alert('Error al generar el documento. Por favor, intenta nuevamente.');
+      toast.error('Error al generar el documento. Por favor, intenta nuevamente.');
     } finally {
       this.isLoading = false;
     }

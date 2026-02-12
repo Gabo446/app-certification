@@ -6,6 +6,7 @@ import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
 import { NgIf, NgFor, NgClass, AsyncPipe } from '@angular/common';
 import { UserDto } from '../../../../shared/models/user.dto';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-profile-manager',
@@ -116,18 +117,18 @@ export class ProfileManagerComponent implements OnInit {
     if (confirm('¿Estás seguro de eliminar este perfil?')) {
       deleteDoc(doc(this.firestore, 'usuarios', id))
         .then(() => {
-          alert('Perfil eliminado');
+          toast.success('Perfil eliminado');
         })
         .catch((err) => {
           console.error('Error al eliminar:', err);
-          alert('No se pudo eliminar el perfil');
+          toast.error('No se pudo eliminar el perfil');
         });
     }
   }
 
   saveProfile() {
     if (this.profileForm.invalid) {
-      alert('Formulario inválido');
+      toast.error('Formulario inválido');
       return;
     }
 
@@ -166,13 +167,13 @@ export class ProfileManagerComponent implements OnInit {
 
     setDoc(docRef, userData, { merge: true })
       .then(() => {
-        alert(`Perfil ${this.editingId ? 'actualizado' : 'creado'} correctamente`);
+        toast.success(`Perfil ${this.editingId ? 'actualizado' : 'creado'} correctamente`);
         this.cancelEdit();
         this.loadProfiles();
       })
       .catch((err) => {
         console.error('Error guardando perfil:', err);
-        alert('Error al guardar');
+        toast.error('Error al guardar');
       })
       .finally(() => {
         this.isSubmitting = false;

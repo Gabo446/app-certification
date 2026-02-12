@@ -6,8 +6,6 @@ import { Storage, ref, uploadBytesResumable, getDownloadURL, deleteObject } from
 import { Firestore, collection, addDoc, updateDoc, doc as firestoreDoc, query, where, getDocs, deleteDoc, Timestamp, orderBy } from '@angular/fire/firestore';
 import { Auth } from '@angular/fire/auth';
 import { toast } from 'ngx-sonner';
-import { NavbarComponent } from '../../layout/components/navbar/navbar.component';
-import { SidebarComponent } from '../../layout/components/sidebar/sidebar.component';
 
 interface VersionLog {
   version: string;
@@ -62,7 +60,7 @@ interface DocumentVersion {
 @Component({
   selector: 'app-document-manager',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, NavbarComponent, SidebarComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
   templateUrl: './document-manager.component.html',
   styleUrls: ['./document-manager.component.css'],
 })

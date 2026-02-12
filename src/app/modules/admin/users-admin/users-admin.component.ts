@@ -3,10 +3,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, A
 import { CommonModule } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { FooterComponent } from '../../layout/components/footer/footer.component';
-import { NavbarComponent } from '../../layout/components/navbar/navbar.component';
-import { SidebarComponent } from '../../layout/components/sidebar/sidebar.component';
-import { AuthService } from '../../../core/guards/auth.service';
+import { AuthService } from '../../../core/services/auth.service';
+import { toast } from 'ngx-sonner';
 import { Observable, BehaviorSubject } from 'rxjs';
 import {
   Firestore,
@@ -22,40 +20,12 @@ import {
   Timestamp,
   orderBy
 } from '@angular/fire/firestore';
-import { UpdateUserData, UserAdminService } from '../../../shared/services/usersService';
-import { ProfileService } from '../../../shared/services/profileService';
-import { CompaniesService } from '../../../shared/services/companyService';
+import { UpdateUserData, UserAdminService } from '../../../shared/services/users-admin.service';
+import { ProfileService } from '../../../shared/services/profile.service';
+import { CompaniesService } from '../../../shared/services/company.service';
 import { companyDto } from '../../../shared/models/company.dto';
 import { UserDto } from '../../../shared/models/user.dto';
-
-interface Usuario {
-  id?: string;
-  uid: string;
-  email: string;
-  nombres: string;
-  apellidoPaterno: string;
-  apellidoMaterno: string;
-  rut: string;
-  fechaNacimiento: any;
-  role: string;
-  isActive: boolean;
-  createdAt: any;
-  lastLoginAt: any;
-  profileCompleted: boolean;
-}
-
-interface Profile {
-  id?: string;
-  jobTitle: string;
-  department: string;
-  managerName: string;
-  organization: string;
-  userId?: string; // Optional reference to user
-  isActive: boolean;
-  createdAt: any;
-  updatedAt: any;
-}
-
+import { ProfileDto } from '../../../shared/models/profile.dto';
 
 @Component({
   selector: 'app-users-admin',
@@ -64,19 +34,16 @@ interface Profile {
     FormsModule,
     ReactiveFormsModule,
     AngularSvgIconModule,
-    ButtonComponent,
-    SidebarComponent,
-    NavbarComponent,
-    FooterComponent
+    ButtonComponent
   ],
   templateUrl: './users-admin.component.html',
   styleUrl: './users-admin.component.css',
 })
 export class UsersAdminComponent implements OnInit {
   usuarios$: Observable<UserDto[]> | undefined;
-  profiles$: Observable<Profile[]> | undefined;
+  profiles$: Observable<ProfileDto[]> | undefined;
   companies$: Observable<companyDto[]> | undefined;
-  profiles: Profile[] | undefined;
+  profiles: ProfileDto[] | undefined;
   companies: companyDto[] | undefined;
   usuariosFiltrados$ = new BehaviorSubject<UserDto[]>([]);
 
@@ -167,7 +134,6 @@ export class UsersAdminComponent implements OnInit {
 
     this.companies$.subscribe(Profiles => {
       this.companies = Profiles;
-      console.log(this.companies);
       this.isLoading = false;
     });
   }
@@ -178,7 +144,6 @@ export class UsersAdminComponent implements OnInit {
 
     this.usuarios$.subscribe(usuarios => {
       this.totalUsers = usuarios.length;
-      console.log(usuarios);
       this.applyFilters(usuarios);
       this.isLoading = false;
     });
@@ -276,11 +241,11 @@ export class UsersAdminComponent implements OnInit {
     this.isCreating = true;
     try {
       const formData = this.userForm.value;
-      console.log(formData);
+
       // Verificar si el RUT ya existe
       const rutExists = await this.checkRutExists(formData.rut);
       if (rutExists) {
-        alert('Error: El RUT ya está registrado');
+        toast.error('El RUT ya está registrado');
         return;
       }
 
@@ -293,11 +258,11 @@ export class UsersAdminComponent implements OnInit {
 
         this.closeCreateModal();
         this.userForm.reset();
-        alert('Usuario creado exitosamente');
+        toast.success('Usuario creado exitosamente');
       }
     } catch (error: any) {
       console.error('Error al crear usuario:', error);
-      alert(`Error: ${this.getErrorMessage(error)}`);
+      toast.error(this.getErrorMessage(error));
     } finally {
       this.isCreating = false;
     }
@@ -328,13 +293,12 @@ export class UsersAdminComponent implements OnInit {
       // Usar el servicio para actualizar (esto sincroniza Auth y Firestore)
       this.userAdminService.updateUser(updateData).subscribe({
         next: (response) => {
-          console.log('Usuario actualizado:', response);
           this.closeEditModal();
 
           if (response.data.emailUpdated) {
-            alert('Usuario actualizado exitosamente. El email también se actualizó en Firebase Auth.');
+            toast.success('Usuario actualizado exitosamente. El email también se actualizó en Firebase Auth.');
           } else {
-            alert('Usuario actualizado exitosamente');
+            toast.success('Usuario actualizado exitosamente');
           }
         },
         error: (error) => {
@@ -350,13 +314,13 @@ export class UsersAdminComponent implements OnInit {
             errorMessage = 'No tienes permisos para actualizar usuarios';
           }
 
-          alert(errorMessage);
+          toast.error(errorMessage);
         }
       });
 
     } catch (error) {
       console.error('Error al actualizar usuario:', error);
-      alert('Error al actualizar usuario');
+      toast.error('Error al actualizar usuario');
     } finally {
       this.isUpdating = false;
     }
@@ -371,9 +335,8 @@ export class UsersAdminComponent implements OnInit {
       // Usar el servicio para eliminar (esto elimina de Auth y Firestore)
       this.userAdminService.deleteUser(this.selectedUser.uid).subscribe({
         next: (response) => {
-          console.log('Usuario eliminado:', response);
           this.closeDeleteModal();
-          alert('Usuario eliminado exitosamente');
+          toast.success('Usuario eliminado exitosamente');
         },
         error: (error) => {
           console.error('Error al eliminar usuario:', error);
@@ -387,13 +350,13 @@ export class UsersAdminComponent implements OnInit {
             errorMessage = error.message;
           }
 
-          alert(errorMessage);
+          toast.error(errorMessage);
         }
       });
 
     } catch (error) {
       console.error('Error al eliminar usuario:', error);
-      alert('Error al eliminar usuario');
+      toast.error('Error al eliminar usuario');
     } finally {
       this.isDeleting = false;
     }
@@ -431,8 +394,6 @@ export class UsersAdminComponent implements OnInit {
       rut: additionalData.rut.trim(),
       profileCompleted: true
     };
-    console.log(userData);
-
     await setDoc(userDocRef, userData);
   }
 

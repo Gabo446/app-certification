@@ -3,9 +3,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { CommonModule } from '@angular/common';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from '../../../shared/components/button/button.component';
-import { FooterComponent } from '../../layout/components/footer/footer.component';
-import { NavbarComponent } from '../../layout/components/navbar/navbar.component';
-import { SidebarComponent } from '../../layout/components/sidebar/sidebar.component';
 import { Observable, BehaviorSubject } from 'rxjs';
 import {
   Firestore,
@@ -22,18 +19,8 @@ import {
   orderBy,
   addDoc
 } from '@angular/fire/firestore';
-
-interface Profile {
-  id?: string;
-  jobTitle: string;
-  department: string;
-  managerName: string;
-  organization: string;
-  userId?: string; // Optional reference to user
-  isActive: boolean;
-  createdAt: any;
-  updatedAt: any;
-}
+import { ProfileDto } from '../../../shared/models/profile.dto';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-profile-admin',
@@ -42,17 +29,14 @@ interface Profile {
     FormsModule,
     ReactiveFormsModule,
     AngularSvgIconModule,
-    ButtonComponent,
-    SidebarComponent,
-    NavbarComponent,
-    FooterComponent
+    ButtonComponent
   ],
   templateUrl: './profile-admin.component.html',
   styleUrl: './profile-admin.component.css',
 })
 export class ProfileAdminComponent implements OnInit {
-  profiles$: Observable<Profile[]> | undefined;
-  profilesFiltered$ = new BehaviorSubject<Profile[]>([]);
+  profiles$: Observable<ProfileDto[]> | undefined;
+  profilesFiltered$ = new BehaviorSubject<ProfileDto[]>([]);
 
   // Forms
   profileForm!: FormGroup;
@@ -68,7 +52,7 @@ export class ProfileAdminComponent implements OnInit {
   isDeleting = false;
 
   // Selected profile
-  selectedProfile: Profile | null = null;
+  selectedProfile: ProfileDto | null = null;
 
   // Filters and search
   searchTerm = '';
@@ -137,7 +121,7 @@ export class ProfileAdminComponent implements OnInit {
       orderBy(this.sortField, this.sortDirection as any)
     );
 
-    this.profiles$ = collectionData(profilesQuery, { idField: 'id' }) as Observable<Profile[]>;
+    this.profiles$ = collectionData(profilesQuery, { idField: 'id' }) as Observable<ProfileDto[]>;
 
     this.profiles$.subscribe(profiles => {
       this.totalProfiles = profiles.length;
@@ -146,7 +130,7 @@ export class ProfileAdminComponent implements OnInit {
     });
   }
 
-  applyFilters(profiles: Profile[]): void {
+  applyFilters(profiles: ProfileDto[]): void {
     let filteredProfiles = profiles;
 
     // Search filter
@@ -204,7 +188,7 @@ export class ProfileAdminComponent implements OnInit {
       const formData = this.profileForm.value;
       const profilesRef = collection(this.firestore, 'profiles');
 
-      const profileData: Omit<Profile, 'id'> = {
+      const profileData: Omit<ProfileDto, 'id'> = {
         jobTitle: formData.jobTitle.trim(),
         department: formData.department,
         managerName: formData.managerName.trim(),
@@ -218,10 +202,10 @@ export class ProfileAdminComponent implements OnInit {
 
       this.closeCreateModal();
       this.profileForm.reset();
-      alert('ProfileDto created successfully');
+      toast.success('Perfil creado exitosamente');
     } catch (error: any) {
       console.error('Error creating profile:', error);
-      alert(`Error: ${error.message || 'Unknown error'}`);
+      toast.error(error.message || 'Error desconocido');
     } finally {
       this.isCreating = false;
     }
@@ -235,7 +219,7 @@ export class ProfileAdminComponent implements OnInit {
       const formData = this.editForm.value;
       const profileDocRef = doc(this.firestore, 'profiles', this.selectedProfile.id);
 
-      const updateData: Partial<Profile> = {
+      const updateData: Partial<ProfileDto> = {
         jobTitle: formData.jobTitle.trim(),
         department: formData.department,
         managerName: formData.managerName.trim(),
@@ -247,10 +231,10 @@ export class ProfileAdminComponent implements OnInit {
       await updateDoc(profileDocRef, updateData);
 
       this.closeEditModal();
-      alert('ProfileDto updated successfully');
+      toast.success('Perfil actualizado exitosamente');
     } catch (error: any) {
       console.error('Error updating profile:', error);
-      alert(`Error: ${error.message || 'Unknown error'}`);
+      toast.error(error.message || 'Error desconocido');
     } finally {
       this.isUpdating = false;
     }
@@ -265,10 +249,10 @@ export class ProfileAdminComponent implements OnInit {
       await deleteDoc(profileDocRef);
 
       this.closeDeleteModal();
-      alert('ProfileDto deleted successfully');
+      toast.success('Perfil eliminado exitosamente');
     } catch (error: any) {
       console.error('Error deleting profile:', error);
-      alert(`Error: ${error.message || 'Unknown error'}`);
+      toast.error(error.message || 'Error desconocido');
     } finally {
       this.isDeleting = false;
     }
@@ -288,7 +272,7 @@ export class ProfileAdminComponent implements OnInit {
     this.profileForm.reset();
   }
 
-  openEditModal(profile: Profile): void {
+  openEditModal(profile: ProfileDto): void {
     this.selectedProfile = profile;
     this.showEditModal = true;
 
@@ -307,7 +291,7 @@ export class ProfileAdminComponent implements OnInit {
     this.editForm.reset();
   }
 
-  openDeleteModal(profile: Profile): void {
+  openDeleteModal(profile: ProfileDto): void {
     this.selectedProfile = profile;
     this.showDeleteModal = true;
   }
@@ -338,7 +322,7 @@ export class ProfileAdminComponent implements OnInit {
   }
 
   // Pagination
-  get paginatedProfiles(): Profile[] {
+  get paginatedProfiles(): ProfileDto[] {
     const profiles = this.profilesFiltered$.value;
     const startIndex = (this.currentPage - 1) * this.itemsPerPage;
     return profiles.slice(startIndex, startIndex + this.itemsPerPage);

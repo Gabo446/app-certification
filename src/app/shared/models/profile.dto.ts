@@ -1,3 +1,5 @@
+import { Timestamp } from '@angular/fire/firestore';
+
 export type ProfileDto = {
   id?: string;
   jobTitle: string;
@@ -6,6 +8,6 @@ export type ProfileDto = {
   organization: string;
   userId?: string; // Optional reference to user
   isActive: boolean;
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
 }

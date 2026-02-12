@@ -27,18 +27,18 @@ export interface UserProfile {
   email: string;
   displayName: string;
   photoURL: string;
-  createdAt: any;
-  lastLoginAt: any;
+  createdAt: Timestamp;
+  lastLoginAt: Timestamp;
   role: string;
   isActive: boolean;
   phoneNumber: string | null;
-  fechaNacimiento: any;
+  fechaNacimiento: Timestamp;
   nombres: string;
   apellidoPaterno: string;
   apellidoMaterno: string;
   rut: string;
   profileCompleted: boolean;
-  updatedAt?: any;
+  updatedAt?: Timestamp;
 }
 
 @Injectable({
@@ -55,56 +55,32 @@ export class AuthService {
     this.user$ = user(this.auth);
   }
 
-  // Registro de usuario (solo Auth, sin crear documento)
   async register(email: string, password: string): Promise<UserCredential> {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(this.auth, email, password);
-      console.log('Usuario creado en Auth:', userCredential.user.uid);
-      return userCredential;
-    } catch (error) {
-      console.error('Error en registro:', error);
-      throw error;
-    }
+    return createUserWithEmailAndPassword(this.auth, email, password);
   }
 
-  // Inicio de sesión
   async login(email: string, password: string): Promise<void> {
+    const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+
     try {
-      const userCredential = await signInWithEmailAndPassword(this.auth, email, password);
+      const userDocRef = doc(this.firestore, 'usuarios', userCredential.user.uid);
+      const userDoc = await getDoc(userDocRef);
 
-      // Actualizar lastLoginAt en Firestore si el documento existe
-      try {
-        const userDocRef = doc(this.firestore, 'usuarios', userCredential.user.uid);
-        const userDoc = await getDoc(userDocRef);
-
-        if (userDoc.exists()) {
-          await updateDoc(userDocRef, {
-            lastLoginAt: Timestamp.now()
-          });
-        }
-      } catch (firestoreError) {
-        console.log('No se pudo actualizar lastLoginAt:', firestoreError);
+      if (userDoc.exists()) {
+        await updateDoc(userDocRef, {
+          lastLoginAt: Timestamp.now()
+        });
       }
-
-      console.log('Usuario autenticado:', userCredential.user.uid);
-    } catch (error) {
-      console.error('Error en login:', error);
-      throw error;
+    } catch (firestoreError) {
+      // Non-critical: lastLoginAt update can fail silently
     }
   }
 
-  // Cerrar sesión
   async logout(): Promise<void> {
-    try {
-      await signOut(this.auth);
-      this.router.navigate(['/auth/sign-in']);
-    } catch (error) {
-      console.error('Error en logout:', error);
-      throw error;
-    }
+    await signOut(this.auth);
+    this.router.navigate(['/auth/sign-in']);
   }
 
-  // Obtener perfil del usuario actual
   async getCurrentUserProfile(): Promise<UserProfile | null> {
     const currentUser = this.auth.currentUser;
     if (!currentUser) {
@@ -125,14 +101,12 @@ export class AuthService {
     }
   }
 
-  // Verificar si el RUT ya existe
   async checkRutExists(rut: string, excludeUid?: string): Promise<boolean> {
     try {
       const usuariosRef = collection(this.firestore, 'usuarios');
       let q = query(usuariosRef, where('rut', '==', rut));
 
       if (excludeUid) {
-        // Para futuras actualizaciones, excluir el UID actual
         q = query(usuariosRef, where('rut', '==', rut), where('uid', '!=', excludeUid));
       }
 
@@ -144,7 +118,6 @@ export class AuthService {
     }
   }
 
-  // Verificar si el email ya existe en Firestore
   async checkEmailExists(email: string, excludeUid?: string): Promise<boolean> {
     try {
       const usuariosRef = collection(this.firestore, 'usuarios');
@@ -162,31 +135,22 @@ export class AuthService {
     }
   }
 
-  // Actualizar perfil del usuario
   async updateUserProfile(uid: string, data: Partial<UserProfile>): Promise<void> {
-    try {
-      const userDocRef = doc(this.firestore, 'usuarios', uid);
-      await updateDoc(userDocRef, {
-        ...data,
-        updatedAt: Timestamp.now()
-      });
-    } catch (error) {
-      console.error('Error actualizando perfil:', error);
-      throw error;
-    }
+    const userDocRef = doc(this.firestore, 'usuarios', uid);
+    await updateDoc(userDocRef, {
+      ...data,
+      updatedAt: Timestamp.now()
+    });
   }
 
-  // Obtener usuario actual
   getCurrentUser(): User | null {
     return this.auth.currentUser;
   }
 
-  // Verificar si el usuario está autenticado
   isAuthenticated(): boolean {
     return !!this.auth.currentUser;
   }
 
-  // Verificar si el perfil está completo
   async isProfileComplete(): Promise<boolean> {
     const profile = await this.getCurrentUserProfile();
     return profile?.profileCompleted || false;

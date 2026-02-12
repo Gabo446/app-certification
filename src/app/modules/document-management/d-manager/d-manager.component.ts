@@ -7,6 +7,7 @@ import * as mammoth from 'mammoth';
 import { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType, UnderlineType } from 'docx';
 import * as fileSaver from 'file-saver';
 import { DocumentService, DocumentRecord } from './document.service';
+import { toast } from 'ngx-sonner';
 
 interface DocumentMetadata {
   status: 'publicado' | 'borrador';
@@ -67,7 +68,6 @@ export class DManagerComponent implements OnInit {
     // Obtener email del usuario actual
     const auth = this.documentService['auth'];
     this.currentUserEmail = auth.currentUser?.email || '';
-    console.log(auth);
 
     await this.loadUserDocuments();
   }
@@ -85,12 +85,12 @@ export class DManagerComponent implements OnInit {
         this.viewMode = 'view';
         this.isReadOnly = true;
       } else {
-        alert('Documento no encontrado');
+        toast.error('Documento no encontrado');
         this.router.navigate(['/word-editor']);
       }
     } catch (error) {
       console.error('Error al cargar documento:', error);
-      alert('Error al cargar el documento');
+      toast.error('Error al cargar el documento');
     } finally {
       this.isLoading = false;
     }
@@ -123,7 +123,7 @@ export class DManagerComponent implements OnInit {
           this.fileName = file.name.replace('.docx', '');
           await this.processDocxFile(file);
         } else {
-          alert('Por favor, selecciona un archivo .docx válido');
+          toast.error('Por favor, selecciona un archivo .docx válido');
         }
       });
     }
@@ -179,7 +179,7 @@ export class DManagerComponent implements OnInit {
       this.viewMode = 'metadata';
     } catch (error) {
       console.error('Error al procesar el archivo:', error);
-      alert('Error al procesar el documento. Por favor, intenta con otro archivo.');
+      toast.error('Error al procesar el documento. Por favor, intenta con otro archivo.');
     } finally {
       this.isLoading = false;
     }
@@ -189,27 +189,27 @@ export class DManagerComponent implements OnInit {
   async saveDocumentWithMetadata(): Promise<void> {
     // Validaciones
     if (!this.documentMetadata.code.trim()) {
-      alert('El código es obligatorio');
+      toast.error('El código es obligatorio');
       return;
     }
 
     if (!this.documentMetadata.area.trim()) {
-      alert('El área es obligatoria');
+      toast.error('El área es obligatoria');
       return;
     }
 
     if (!this.documentMetadata.description.trim()) {
-      alert('La descripción es obligatoria');
+      toast.error('La descripción es obligatoria');
       return;
     }
 
     if (!this.documentMetadata.version.trim()) {
-      alert('La versión es obligatoria');
+      toast.error('La versión es obligatoria');
       return;
     }
 
     if (!this.tempFile) {
-      alert('Error: No hay archivo para guardar');
+      toast.error('No hay archivo para guardar');
       return;
     }
 
@@ -227,14 +227,14 @@ export class DManagerComponent implements OnInit {
       this.tempFile = null;
       this.tempHtmlContent = '';
 
-      alert('✅ Documento guardado exitosamente');
+      toast.success('Documento guardado exitosamente');
 
       // Cargar la lista actualizada
       await this.loadUserDocuments();
       this.viewMode = 'list';
     } catch (error) {
       console.error('Error al guardar documento:', error);
-      alert('Error al guardar el documento. Por favor, intenta nuevamente.');
+      toast.error('Error al guardar el documento. Por favor, intenta nuevamente.');
     } finally {
       this.isLoading = false;
     }
@@ -264,7 +264,7 @@ export class DManagerComponent implements OnInit {
 
   async downloadDocument(): Promise<void> {
     if (!this.htmlContent) {
-      alert('No hay contenido para descargar');
+      toast.error('No hay contenido para descargar');
       return;
     }
 
@@ -380,10 +380,10 @@ export class DManagerComponent implements OnInit {
       const blob = await Packer.toBlob(doc);
       fileSaver.saveAs(blob, `${this.fileName}.docx`);
 
-      alert('✅ Documento descargado exitosamente');
+      toast.success('Documento descargado exitosamente');
     } catch (error) {
       console.error('Error al generar el documento:', error);
-      alert('Error al generar el documento. Por favor, intenta nuevamente.');
+      toast.error('Error al generar el documento. Por favor, intenta nuevamente.');
     } finally {
       this.isLoading = false;
     }

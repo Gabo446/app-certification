@@ -9,7 +9,7 @@ import { Nft } from '../../models/nft';
 @Component({
   selector: 'app-nft',
   templateUrl: './nft.component.html',
-  imports: [  ],
+  imports: [],
 })
 export class NftComponent implements OnInit {
   nft: Array<Nft>;

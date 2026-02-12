@@ -1,34 +1,13 @@
-// auth.guard.ts
-import { Injectable } from '@angular/core';
-import { CanActivate, CanActivateChild, Router, UrlTree } from '@angular/router';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { authState } from '@angular/fire/auth';
-import { Auth } from '@angular/fire/auth';
+import { authState, Auth } from '@angular/fire/auth';
 
-@Injectable({
-  providedIn: 'root',
-})
-export class AuthGuard implements CanActivate, CanActivateChild {
-  constructor(private auth: Auth, private router: Router) {}
+export const authGuard: CanActivateFn = () => {
+  const auth = inject(Auth);
+  const router = inject(Router);
 
-  canActivate(): Observable<boolean | UrlTree> {
-    return this.check();
-  }
-
-  canActivateChild(): Observable<boolean | UrlTree> {
-    return this.check();
-  }
-
-  private check(): Observable<boolean | UrlTree> {
-    return authState(this.auth).pipe(
-      map((user) => {
-        if (user) {
-          return true;
-        } else {
-          return this.router.createUrlTree(['/auth/sign-in']);
-        }
-      }),
-    );
-  }
-}
+  return authState(auth).pipe(
+    map((user) => (user ? true : router.createUrlTree(['/auth/sign-in']))),
+  );
+};

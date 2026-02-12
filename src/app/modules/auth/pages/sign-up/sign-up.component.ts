@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators, A
 import { RouterLink } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from 'src/app/shared/components/button/button.component';
-import { AuthService } from '../../../../core/guards/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { toast } from 'ngx-sonner';
 import { NgClass, NgIf } from '@angular/common';
 import { Observable } from 'rxjs';
 import {
@@ -192,7 +193,7 @@ export class SignUpComponent implements OnInit {
       const result = await this.completarPerfil(profileData);
 
       if (result.success) {
-        alert('Registro exitoso. Perfil completado correctamente.');
+        toast.success('Registro exitoso. Perfil completado correctamente.');
         // Aquí podrías redirigir al usuario a otra página
         // this.router.navigate(['/dashboard']);
       }
@@ -233,7 +234,7 @@ export class SignUpComponent implements OnInit {
         errorMessage = error.details.message;
       }
 
-      alert(`Error: ${errorMessage}`);
+      toast.error(errorMessage);
     } finally {
       this.isRegistering = false;
     }

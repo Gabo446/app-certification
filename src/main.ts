@@ -1,19 +1,9 @@
-import { enableProdMode, importProvidersFrom, provideAppInitializer } from '@angular/core';
+import { enableProdMode } from '@angular/core';
+import { bootstrapApplication } from '@angular/platform-browser';
 
 import { environment } from './environments/environment';
 import { AppComponent } from './app/app.component';
-import { AppRoutingModule } from './app/app-routing.module';
-import { BrowserModule, bootstrapApplication } from '@angular/platform-browser';
-import { provideFirebaseApp } from '@angular/fire/app';
-import { provideFirestore } from '@angular/fire/firestore';
-import { initializeApp } from 'firebase/app';
-import { getFirestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { AngularSvgIconModule } from 'angular-svg-icon';
-import { provideHttpClient } from '@angular/common/http';
-import { getFunctions, provideFunctions } from '@angular/fire/functions';
-import { getStorage, provideStorage } from '@angular/fire/storage';
-import { provideAuth } from '@angular/fire/auth';
+import { appConfig } from './app/app.config';
 
 if (environment.production) {
   enableProdMode();
@@ -23,18 +13,7 @@ if (environment.production) {
   }
 }
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    importProvidersFrom(BrowserModule, AppRoutingModule),
-    provideFirebaseApp(() => initializeApp(environment.firebaseConfig)),
-    provideAuth(() => getAuth()),
-    provideFirestore(() => getFirestore()),
-    provideFunctions(() => getFunctions()),
-    provideStorage(() => getStorage()),
-    provideHttpClient(),
-    importProvidersFrom(AngularSvgIconModule.forRoot()),
-  ],
-}).catch((err) => console.error(err));
+bootstrapApplication(AppComponent, appConfig).catch((err) => console.error(err));
 
 function selfXSSWarning() {
   setTimeout(() => {

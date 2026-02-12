@@ -1,3 +1,5 @@
+import { Timestamp } from '@angular/fire/firestore';
+
 export type companyDto = {
   id?: string;
   businessName: string;
@@ -14,8 +16,8 @@ export type companyDto = {
   website?: string;
   description?: string;
   isActive: boolean;
-  createdAt: any;
-  updatedAt: any;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
   employeeCount: number;
   annualRevenue?: number;
   foundedYear?: number;

@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ThemeService } from '../../../../../core/services/theme.service';
 import { ClickOutsideDirective } from '../../../../../shared/directives/click-outside.directive';
-import { AuthService } from '../../../../../core/guards/auth.service';
+import { AuthService } from '../../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-profile-menu',
@@ -93,7 +93,6 @@ export class ProfileMenuComponent implements OnInit {
   }
 
   logout() {
-    console.log('Logging out...');
     this.authService.logout();
     this.router.navigate(['/auth']);
   }

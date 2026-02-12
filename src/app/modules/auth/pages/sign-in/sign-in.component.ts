@@ -4,7 +4,8 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { Router, RouterLink } from '@angular/router';
 import { AngularSvgIconModule } from 'angular-svg-icon';
 import { ButtonComponent } from '../../../../shared/components/button/button.component';
-import { AuthService } from '../../../../core/guards/auth.service';
+import { AuthService } from '../../../../core/services/auth.service';
+import { toast } from 'ngx-sonner';
 
 @Component({
   selector: 'app-sign-in',
@@ -23,9 +24,7 @@ export class SignInComponent implements OnInit {
     private authService: AuthService
   ) {}
 
-  onClick() {
-    console.log('Button clicked');
-  }
+  onClick() {}
 
   ngOnInit(): void {
     this.form = this._formBuilder.group({
@@ -44,20 +43,16 @@ export class SignInComponent implements OnInit {
 
   async onSubmit() {
     this.submitted = true;
-    console.log('btn')
     if (this.form.invalid) {
       return;
     }
 
     try {
-      const login = await this.authService.login(this.form.value.email, this.form.value.password);
-      console.log(login)
+      await this.authService.login(this.form.value.email, this.form.value.password);
       await this._router.navigate(['/dashboard']);
-      //alert('Login exitoso');
-      console.log('paso la linea 55');
     } catch (error) {
       console.error('Error al iniciar sesión', error);
-      alert('Error al iniciar sesión');
+      toast.error('Error al iniciar sesión');
     }
 
 

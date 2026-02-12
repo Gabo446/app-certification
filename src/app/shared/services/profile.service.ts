@@ -15,18 +15,7 @@ import {
   orderBy,
   addDoc
 } from '@angular/fire/firestore';
-
-export interface Profile {
-  id?: string;
-  jobTitle: string;
-  department: string;
-  managerName: string;
-  organization: string;
-  userId?: string; // Optional reference to user
-  isActive: boolean;
-  createdAt: any;
-  updatedAt: any;
-}
+import { ProfileDto } from '../models/profile.dto';
 
 export interface CreateProfileData {
   jobTitle: string;
@@ -52,45 +41,45 @@ export class ProfileService {
   /**
    * Get all profiles
    */
-  getProfiles(): Observable<Profile[]> {
+  getProfiles(): Observable<ProfileDto[]> {
     const profilesRef = collection(this.firestore, this.collectionName);
     const profilesQuery = query(profilesRef, orderBy('createdAt', 'desc'));
-    return collectionData(profilesQuery, { idField: 'id' }) as Observable<Profile[]>;
+    return collectionData(profilesQuery, { idField: 'id' }) as Observable<ProfileDto[]>;
   }
 
   /**
    * Get profiles by department
    */
-  getProfilesByDepartment(department: string): Observable<Profile[]> {
+  getProfilesByDepartment(department: string): Observable<ProfileDto[]> {
     const profilesRef = collection(this.firestore, this.collectionName);
     const profilesQuery = query(
       profilesRef,
       where('department', '==', department),
       orderBy('createdAt', 'desc')
     );
-    return collectionData(profilesQuery, { idField: 'id' }) as Observable<Profile[]>;
+    return collectionData(profilesQuery, { idField: 'id' }) as Observable<ProfileDto[]>;
   }
 
   /**
    * Get profiles by organization
    */
-  getProfilesByOrganization(organization: string): Observable<Profile[]> {
+  getProfilesByOrganization(organization: string): Observable<ProfileDto[]> {
     const profilesRef = collection(this.firestore, this.collectionName);
     const profilesQuery = query(
       profilesRef,
       where('organization', '==', organization),
       orderBy('createdAt', 'desc')
     );
-    return collectionData(profilesQuery, { idField: 'id' }) as Observable<Profile[]>;
+    return collectionData(profilesQuery, { idField: 'id' }) as Observable<ProfileDto[]>;
   }
 
   /**
    * Get profile by user ID
    */
-  getProfileByUserId(userId: string): Observable<Profile[]> {
+  getProfileByUserId(userId: string): Observable<ProfileDto[]> {
     const profilesRef = collection(this.firestore, this.collectionName);
     const profilesQuery = query(profilesRef, where('userId', '==', userId));
-    return collectionData(profilesQuery, { idField: 'id' }) as Observable<Profile[]>;
+    return collectionData(profilesQuery, { idField: 'id' }) as Observable<ProfileDto[]>;
   }
 
   /**
@@ -99,7 +88,7 @@ export class ProfileService {
   async createProfile(profileData: CreateProfileData): Promise<void> {
     const profilesRef = collection(this.firestore, this.collectionName);
 
-    const newProfile: Omit<Profile, 'id'> = {
+    const newProfile: Omit<ProfileDto, 'id'> = {
       jobTitle: profileData.jobTitle.trim(),
       department: profileData.department,
       managerName: profileData.managerName.trim(),
@@ -123,7 +112,7 @@ export class ProfileService {
 
     const profileDocRef = doc(this.firestore, this.collectionName, profileData.id);
 
-    const updateData: Partial<Profile> = {
+    const updateData: Partial<ProfileDto> = {
       jobTitle: profileData.jobTitle.trim(),
       department: profileData.department,
       managerName: profileData.managerName.trim(),
@@ -192,7 +181,7 @@ export class ProfileService {
 
       const departments = new Set<string>();
       querySnapshot.docs.forEach(doc => {
-        const profile = doc.data() as Profile;
+        const profile = doc.data() as ProfileDto;
         if (profile.department) {
           departments.add(profile.department);
         }
@@ -215,7 +204,7 @@ export class ProfileService {
 
       const organizations = new Set<string>();
       querySnapshot.docs.forEach(doc => {
-        const profile = doc.data() as Profile;
+        const profile = doc.data() as ProfileDto;
         if (profile.organization) {
           organizations.add(profile.organization);
         }
@@ -231,7 +220,7 @@ export class ProfileService {
   /**
    * Search profiles by multiple criteria
    */
-  searchProfiles(searchTerm: string, profiles: Profile[]): Profile[] {
+  searchProfiles(searchTerm: string, profiles: ProfileDto[]): ProfileDto[] {
     if (!searchTerm || !searchTerm.trim()) {
       return profiles;
     }
@@ -249,13 +238,13 @@ export class ProfileService {
    * Filter profiles by criteria
    */
   filterProfiles(
-    profiles: Profile[],
+    profiles: ProfileDto[],
     filters: {
       department?: string;
       organization?: string;
       isActive?: boolean;
     }
-  ): Profile[] {
+  ): ProfileDto[] {
     let filteredProfiles = [...profiles];
 
     if (filters.department) {
@@ -302,7 +291,7 @@ export class ProfileService {
       };
 
       querySnapshot.docs.forEach(doc => {
-        const profile = doc.data() as Profile;
+        const profile = doc.data() as ProfileDto;
         stats.total++;
 
         if (profile.isActive) {
