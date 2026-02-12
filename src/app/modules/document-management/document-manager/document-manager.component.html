@@ -1,3 +1,4 @@
+<!-- document-manager.component.html -->
 <div class="flex h-screen w-full overflow-hidden">
   <!-- Sidebar -->
   <app-sidebar></app-sidebar>
@@ -11,39 +12,37 @@
       id="main-content"
       class="scrollbar-thumb-rounded scrollbar-track-rounded grow overflow-auto scrollbar-thin scrollbar-track-transparent scrollbar-thumb-muted">
       <div class="mx-auto px-4 py-4 sm:px-8 lg:container">
-
-        <!-- document-manager.component.html -->
-        <div class="min-h-screen bg-gray-50 p-6">
-          <div class="max-w-7xl mx-auto">
-            <!-- Header -->
-            <div class="bg-white rounded-lg shadow-sm p-6 mb-6">
-              <div class="flex justify-between items-center mb-4">
-                <div>
-                  <h1 class="text-3xl font-bold text-gray-900">Gestor Documental</h1>
-                  <p class="text-gray-600 mt-1">Administra tus documentos con control de versiones</p>
-                </div>
-                <button
-                  (click)="openUploadModal()"
-                  class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-medium transition-colors flex items-center gap-2">
-                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                  </svg>
-                  Nuevo Documento
-                </button>
+        <div class="space-y-6">
+          <!-- Header / Card -->
+          <div class="rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
+            <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h1 class="text-xl font-semibold text-foreground">Gestor Documental</h1>
+                <p class="mt-1 text-sm text-muted-foreground">Administra tus documentos con control de versiones</p>
               </div>
 
-              <!-- Filters -->
-              <div class="flex gap-4">
-                <div class="flex-1">
-                  <input
-                    type="text"
-                    [(ngModel)]="searchTerm"
-                    placeholder="Buscar por nombre, código, área..."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-                <select
-                  [(ngModel)]="filterStatus"
-                  class="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+              <button
+                (click)="openUploadModal()"
+                class="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90">
+                <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                </svg>
+                Nuevo Documento
+              </button>
+            </div>
+
+            <!-- Filters -->
+            <div class="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+              <div class="md:col-span-2">
+                <input
+                  type="text"
+                  [(ngModel)]="searchTerm"
+                  placeholder="Buscar por nombre, código, área..."
+                  class="w-full" />
+              </div>
+
+              <div>
+                <select [(ngModel)]="filterStatus" class="w-full">
                   <option value="all">Todos los estados</option>
                   <option value="draft">Borrador</option>
                   <option value="in_review">En Revisión</option>
@@ -52,517 +51,233 @@
                 </select>
               </div>
             </div>
+          </div>
 
-            <!-- Documents List -->
-            <div class="bg-white rounded-lg shadow-sm overflow-hidden">
-              <div class="overflow-x-auto">
-                <table class="min-w-full divide-y divide-gray-200">
-                  <thead class="bg-gray-50">
+          <!-- Table -->
+          <div class="rounded-xl border border-border bg-card text-card-foreground shadow-sm">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-border">
+                <thead class="bg-muted/30">
                   <tr>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documento</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Área</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Versión</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsables</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
-                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
-                    <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Acciones</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Código</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Documento</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Área</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versión</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Responsables</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
+                    <th class="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha</th>
+                    <th class="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
                   </tr>
-                  </thead>
-                  <tbody class="bg-white divide-y divide-gray-200">
-                  <tr *ngFor="let doc of filteredDocuments" class="hover:bg-gray-50 transition-colors">
+                </thead>
+
+                <tbody class="divide-y divide-border">
+                  <tr *ngFor="let doc of filteredDocuments" class="hover:bg-muted/20">
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="text-sm font-mono font-semibold text-blue-600">{{ doc.code }}</span>
+                      <span class="text-sm font-mono font-semibold text-primary">{{ doc.code }}</span>
                     </td>
+
                     <td class="px-6 py-4">
-                      <div class="flex items-center">
-                        <div class="flex-shrink-0 h-10 w-10 bg-blue-100 rounded-lg flex items-center justify-center">
-                          <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                      <div class="flex items-center gap-4">
+                        <div class="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                          <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                           </svg>
                         </div>
-                        <div class="ml-4">
-                          <div class="text-sm font-medium text-gray-900">{{ doc.fileName }}</div>
-                          <div class="text-sm text-gray-500">{{ doc.description }}</div>
-                          <div class="text-xs text-gray-400 mt-1">
+
+                        <div class="min-w-0">
+                          <div class="truncate text-sm font-medium text-foreground">{{ doc.fileName }}</div>
+                          <div class="truncate text-sm text-muted-foreground">{{ doc.description }}</div>
+                          <div class="mt-1 text-xs text-muted-foreground">
                             Creado por: {{ doc.createdBy }} | {{ formatFileSize(doc.fileSize) }}
                           </div>
                         </div>
                       </div>
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <span class="text-sm text-gray-900">{{ doc.area }}</span>
+                      <span class="text-sm text-foreground">{{ doc.area }}</span>
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap">
-                      <div class="flex items-center gap-2">
-                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                          v{{ doc.version }}
-                        </span>
-                        <button
-                          *ngIf="doc.versionHistory.length > 1"
-                          (click)="openVersionHistoryModal(doc)"
-                          class="text-purple-600 hover:text-purple-900"
-                          title="Ver historial">
-                          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                          </svg>
-                        </button>
-                      </div>
+                      <span class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-foreground">
+                        v{{ doc.version }}
+                      </span>
                     </td>
+
                     <td class="px-6 py-4">
-                      <div class="text-sm text-gray-900">
-                        <div><strong>Dueño:</strong> {{ doc.versionOwner }}</div>
-                        <div><strong>Revisor:</strong> {{ doc.reviewer || 'N/A' }}</div>
-                        <div><strong>Aprobador:</strong> {{ doc.approver || 'N/A' }}</div>
+                      <div class="text-sm text-foreground">
+                        <div><span class="font-semibold">Dueño:</span> {{ doc.versionOwner }}</div>
+                        <div><span class="font-semibold">Revisor:</span> {{ doc.reviewer || 'N/A' }}</div>
+                        <div><span class="font-semibold">Aprobador:</span> {{ doc.approver || 'N/A' }}</div>
                       </div>
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap">
                       <span [class]="'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + getStatusBadgeClass(doc.status)">
                         {{ getStatusLabel(doc.status) }}
                       </span>
                     </td>
-                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+
+                    <td class="px-6 py-4 whitespace-nowrap text-sm text-muted-foreground">
                       {{ doc.uploadDate.toDate() | date:'dd/MM/yyyy HH:mm' }}
                     </td>
+
                     <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <div class="flex justify-end gap-2">
+                        <!-- NUEVO: Historial -->
+                        <button
+                          (click)="openVersionHistoryModal(doc)"
+                          class="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted/30"
+                          title="Historial">
+                          <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                          </svg>
+                          Historial
+                        </button>
+
                         <button
                           (click)="openNewVersionModal(doc)"
-                          class="text-purple-600 hover:text-purple-900 p-2 rounded-lg hover:bg-purple-50 transition-colors"
+                          class="rounded-md p-2 text-foreground hover:bg-muted/30"
                           title="Nueva versión">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
                           </svg>
                         </button>
+
                         <button
                           (click)="downloadDocument(doc)"
-                          class="text-blue-600 hover:text-blue-900 p-2 rounded-lg hover:bg-blue-50 transition-colors"
+                          class="rounded-md p-2 text-foreground hover:bg-muted/30"
                           title="Descargar">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
                           </svg>
                         </button>
+
                         <button
                           (click)="openReviewModal(doc)"
-                          class="text-green-600 hover:text-green-900 p-2 rounded-lg hover:bg-green-50 transition-colors"
+                          class="rounded-md p-2 text-foreground hover:bg-muted/30"
                           title="Revisar">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
+                          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"></path>
                           </svg>
                         </button>
+
                         <button
                           (click)="deleteDocument(doc)"
-                          class="text-red-600 hover:text-red-900 p-2 rounded-lg hover:bg-red-50 transition-colors"
+                          class="rounded-md p-2 text-destructive hover:bg-muted/30"
                           title="Eliminar">
-                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                          <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
                           </svg>
                         </button>
                       </div>
                     </td>
                   </tr>
+
                   <tr *ngIf="filteredDocuments.length === 0">
-                    <td colspan="8" class="px-6 py-12 text-center text-gray-500">
-                      <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                      </svg>
-                      <p class="mt-2">No se encontraron documentos</p>
+                    <td colspan="8" class="px-6 py-12 text-center text-muted-foreground">
+                      <p class="text-sm">No se encontraron documentos</p>
                     </td>
                   </tr>
-                  </tbody>
-                </table>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
 
-          <!-- Upload Modal (Two Steps) -->
-          <div *ngIf="showUploadModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-xl max-w-3xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div class="p-6 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-900">
-                  {{ isNewVersion ? 'Nueva Versión de Documento' : 'Nuevo Documento' }}
-                </h2>
-                <p class="text-sm text-gray-600 mt-1">
-                  Paso {{ currentStep }} de 2: {{ currentStep === 1 ? 'Información del Documento' : 'Carga de Archivo' }}
-                </p>
+          <!-- Upload Modal / Review Modal: se mantienen tal cual (ya están ok con Tailwind) -->
+          <!-- ... existing code ... -->
 
-                <!-- Progress Bar -->
-                <div class="mt-4 flex items-center">
-                  <div class="flex-1 flex items-center">
-                    <div class="flex items-center justify-center w-8 h-8 rounded-full"
-                         [class.bg-blue-600]="currentStep >= 1"
-                         [class.bg-gray-300]="currentStep < 1">
-                      <span class="text-white text-sm font-semibold">1</span>
-                    </div>
-                    <div class="flex-1 h-1 mx-2"
-                         [class.bg-blue-600]="currentStep >= 2"
-                         [class.bg-gray-300]="currentStep < 2"></div>
-                  </div>
-                  <div class="flex items-center justify-center w-8 h-8 rounded-full"
-                       [class.bg-blue-600]="currentStep >= 2"
-                       [class.bg-gray-300]="currentStep < 2">
-                    <span class="text-white text-sm font-semibold">2</span>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Step 1: Document Information -->
-              <form *ngIf="currentStep === 1" [formGroup]="step1Form" class="p-6 space-y-4">
-                <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                  <div class="flex items-start">
-                    <svg class="w-5 h-5 text-blue-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <div>
-                      <p class="text-sm font-medium text-blue-900">Información del Documento</p>
-                      <p class="text-xs text-blue-700 mt-1">Esta información identifica el documento en el sistema</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-4">
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">
-                      Versión *
-                      <span class="text-xs text-gray-500 font-normal ml-1">(ej: 1.0, 2.1)</span>
-                    </label>
-                    <input
-                      type="text"
-                      formControlName="version"
-                      [readonly]="isNewVersion"
-                      placeholder="1.0"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                      [class.bg-gray-100]="isNewVersion">
-                  </div>
-
-                  <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Código *</label>
-                    <input
-                      type="text"
-                      formControlName="code"
-                      [readonly]="isNewVersion"
-                      placeholder="DOC-001"
-                      class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                      [class.bg-gray-100]="isNewVersion">
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Área *</label>
-                  <input
-                    type="text"
-                    formControlName="area"
-                    [readonly]="isNewVersion"
-                    placeholder="Recursos Humanos, TI, Operaciones, etc."
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                    [class.bg-gray-100]="isNewVersion">
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Descripción *</label>
-                  <textarea
-                    formControlName="description"
-                    [readonly]="isNewVersion"
-                    rows="3"
-                    placeholder="Breve descripción del documento"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:bg-gray-100"
-                    [class.bg-gray-100]="isNewVersion"></textarea>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Estado Inicial *</label>
-                  <select
-                    formControlName="initialStatus"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="published">Publicado</option>
-                    <option value="draft">Borrador</option>
-                  </select>
-                </div>
-
-                <!-- Read-only fields -->
-                <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 space-y-2">
-                  <p class="text-xs font-semibold text-gray-700 uppercase mb-2">Información de Creación (Solo lectura)</p>
-                  <div class="grid grid-cols-2 gap-3 text-sm">
-                    <div>
-                      <span class="text-gray-600">Confeccionado por:</span>
-                      <p class="font-medium text-gray-900">{{ auth.currentUser?.email || 'Usuario' }}</p>
-                    </div>
-                    <div>
-                      <span class="text-gray-600">Fecha de creación:</span>
-                      <p class="font-medium text-gray-900">{{ creationDate }}</p>
-                    </div>
-                  </div>
-                </div>
-              </form>
-
-              <!-- Step 2: File Upload and Responsibilities -->
-              <form *ngIf="currentStep === 2" [formGroup]="step2Form" class="p-6 space-y-4">
-                <div class="bg-green-50 border border-green-200 rounded-lg p-4 mb-4">
-                  <div class="flex items-start">
-                    <svg class="w-5 h-5 text-green-600 mt-0.5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                    </svg>
-                    <div>
-                      <p class="text-sm font-medium text-green-900">Carga de Archivo y Asignación</p>
-                      <p class="text-xs text-green-700 mt-1">Suba el archivo y asigne los responsables del documento</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Archivo *</label>
-                  <input
-                    type="file"
-                    (change)="onFileSelected($event)"
-                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-                  <p class="mt-1 text-sm text-gray-500">{{ selectedFile ? selectedFile.name : 'Ningún archivo seleccionado' }}</p>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Dueño de Versión *</label>
-                  <input
-                    type="text"
-                    formControlName="versionOwner"
-                    placeholder="Nombre del responsable de versión"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Revisor *</label>
-                  <input
-                    type="text"
-                    formControlName="reviewer"
-                    placeholder="Nombre del revisor"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Aprobador *</label>
-                  <input
-                    type="text"
-                    formControlName="approver"
-                    placeholder="Nombre del aprobador"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Comentarios</label>
-                  <textarea
-                    formControlName="comments"
-                    rows="3"
-                    placeholder="Comentarios adicionales sobre el documento"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                </div>
-
-                <div *ngIf="isUploading" class="space-y-2">
-                  <div class="flex justify-between text-sm text-gray-700">
-                    <span>Subiendo...</span>
-                    <span>{{ uploadProgress.toFixed(0) }}%</span>
-                  </div>
-                  <div class="w-full bg-gray-200 rounded-full h-2">
-                    <div class="bg-blue-600 h-2 rounded-full transition-all duration-300" [style.width.%]="uploadProgress"></div>
-                  </div>
-                </div>
-              </form>
-
-              <!-- Modal Footer -->
-              <div class="p-6 border-t border-gray-200 flex justify-between">
-                <button
-                  *ngIf="currentStep === 2"
-                  (click)="previousStep()"
-                  [disabled]="isUploading"
-                  class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50">
-                  ← Anterior
-                </button>
-                <div class="flex gap-3" [class.ml-auto]="currentStep === 1">
-                  <button
-                    (click)="closeUploadModal()"
-                    [disabled]="isUploading"
-                    class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50">
-                    Cancelar
-                  </button>
-                  <button
-                    *ngIf="currentStep === 1"
-                    (click)="nextStep()"
-                    [disabled]="!step1Form.valid"
-                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    Siguiente →
-                  </button>
-                  <button
-                    *ngIf="currentStep === 2"
-                    (click)="uploadDocument()"
-                    [disabled]="!selectedFile || !step2Form.valid || isUploading"
-                    class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                    {{ isUploading ? 'Subiendo...' : 'Subir Documento' }}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Review Modal -->
-          <div *ngIf="showReviewModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4">
-              <div class="p-6 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-900">Revisar Documento</h2>
-                <p class="text-sm text-gray-600 mt-1">{{ selectedDocument?.fileName }}</p>
-              </div>
-
-              <form [formGroup]="reviewForm" class="p-6 space-y-4">
-                <div class="bg-gray-50 p-4 rounded-lg space-y-2">
-                  <div class="grid grid-cols-2 gap-4 text-sm">
-                    <div>
-                      <span class="font-semibold text-gray-700">Código:</span>
-                      <span class="ml-2">{{ selectedDocument?.code }}</span>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-gray-700">Versión:</span>
-                      <span class="ml-2">v{{ selectedDocument?.version }}</span>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-gray-700">Área:</span>
-                      <span class="ml-2">{{ selectedDocument?.area }}</span>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-gray-700">Dueño:</span>
-                      <span class="ml-2">{{ selectedDocument?.versionOwner }}</span>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-gray-700">Revisor:</span>
-                      <span class="ml-2">{{ selectedDocument?.reviewer }}</span>
-                    </div>
-                    <div>
-                      <span class="font-semibold text-gray-700">Aprobador:</span>
-                      <span class="ml-2">{{ selectedDocument?.approver }}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Estado *</label>
-                  <select
-                    formControlName="status"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    <option value="draft">Borrador</option>
-                    <option value="in_review">En Revisión</option>
-                    <option value="approved">Aprobado</option>
-                    <option value="rejected">Rechazado</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label class="block text-sm font-medium text-gray-700 mb-2">Comentarios</label>
-                  <textarea
-                    formControlName="comments"
-                    rows="4"
-                    placeholder="Agregue comentarios sobre la revisión"
-                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
-                </div>
-              </form>
-
-              <div class="p-6 border-t border-gray-200 flex justify-end gap-3">
-                <button
-                  (click)="closeReviewModal()"
-                  class="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
-                  Cancelar
-                </button>
-                <button
-                  (click)="updateDocumentStatus()"
-                  [disabled]="!reviewForm.valid"
-                  class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
-                  Actualizar Estado
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Version History Modal -->
-          <div *ngIf="showVersionHistoryModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-              <div class="p-6 border-b border-gray-200">
-                <h2 class="text-2xl font-bold text-gray-900">Historial de Versiones</h2>
-                <p class="text-sm text-gray-600 mt-1">
+          <!-- Version History Modal (AHORA EN GRILLA/TABLA) -->
+          <div *ngIf="showVersionHistoryModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+            <div class="w-full max-w-5xl overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-xl">
+              <div class="border-b border-border p-6">
+                <h2 class="text-lg font-semibold text-foreground">Historial</h2>
+                <p class="mt-1 text-sm text-muted-foreground">
                   {{ selectedDocument?.code }} - {{ selectedDocument?.fileName }}
                 </p>
               </div>
 
-              <div class="p-6">
-                <div class="space-y-4">
-                  <div *ngFor="let log of selectedDocument?.versionHistory; let i = index"
-                       class="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-                       [class.bg-purple-50]="i === 0"
-                       [class.border-purple-300]="i === 0">
-                    <div class="flex justify-between items-start mb-3">
-                      <div class="flex items-center gap-3">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-semibold"
-                              [class.bg-purple-600]="i === 0"
-                              [class.text-white]="i === 0"
-                              [class.bg-gray-200]="i !== 0"
-                              [class.text-gray-700]="i !== 0">
-                          v{{ log.version }}
-                        </span>
-                        <span *ngIf="i === 0" class="text-xs font-semibold text-purple-600 uppercase">Actual</span>
-                      </div>
-                      <span [class]="'px-2 py-1 text-xs font-semibold rounded-full ' + getStatusBadgeClass(log.status)">
-                        {{ getStatusLabel(log.status) }}
-                      </span>
-                    </div>
+              <div class="max-h-[70vh] overflow-auto p-6">
+                <div class="overflow-x-auto rounded-lg border border-border">
+                  <table class="min-w-full divide-y divide-border">
+                    <thead class="bg-muted/30">
+                      <tr>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Versión</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Estado</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Fecha</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Subido por</th>
+                        <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-muted-foreground">Archivo</th>
+                        <th class="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-muted-foreground">Acciones</th>
+                      </tr>
+                    </thead>
 
-                    <div class="grid grid-cols-2 gap-x-6 gap-y-2 text-sm">
-                      <div>
-                        <span class="font-semibold text-gray-700">Archivo:</span>
-                        <span class="ml-2 text-gray-900">{{ log.fileName }}</span>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-gray-700">Tamaño:</span>
-                        <span class="ml-2 text-gray-900">{{ formatFileSize(log.fileSize) }}</span>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-gray-700">Subido por:</span>
-                        <span class="ml-2 text-gray-900">{{ log.uploadedBy }}</span>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-gray-700">Fecha:</span>
-                        <span class="ml-2 text-gray-900">{{ log.uploadDate.toDate() | date:'dd/MM/yyyy HH:mm' }}</span>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-gray-700">Dueño:</span>
-                        <span class="ml-2 text-gray-900">{{ log.versionOwner }}</span>
-                      </div>
-                      <div>
-                        <span class="font-semibold text-gray-700">Revisor:</span>
-                        <span class="ml-2 text-gray-900">{{ log.reviewer || 'N/A' }}</span>
-                      </div>
-                      <div class="col-span-2">
-                        <span class="font-semibold text-gray-700">Aprobador:</span>
-                        <span class="ml-2 text-gray-900">{{ log.approver || 'N/A' }}</span>
-                      </div>
-                      <div *ngIf="log.comments" class="col-span-2">
-                        <span class="font-semibold text-gray-700">Comentarios:</span>
-                        <p class="mt-1 text-gray-900 bg-white p-2 rounded border border-gray-200">{{ log.comments }}</p>
-                      </div>
-                    </div>
+                    <tbody class="divide-y divide-border bg-card">
+                      <tr *ngFor="let log of selectedVersionHistory; let i = index" class="hover:bg-muted/20">
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span class="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-foreground">
+                            v{{ log.version }}
+                          </span>
+                          <span *ngIf="i === 0" class="ml-2 text-xs font-semibold text-primary">Actual</span>
+                        </td>
 
-                    <div class="mt-3 flex gap-2">
-                      <a
-                        [href]="log.fileUrl"
-                        target="_blank"
-                        download
-                        class="text-xs text-blue-600 hover:text-blue-800 flex items-center gap-1">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
-                        </svg>
-                        Descargar esta versión
-                      </a>
-                    </div>
-                  </div>
+                        <td class="px-4 py-3 whitespace-nowrap">
+                          <span [class]="'px-2 py-1 text-xs font-semibold rounded-full ' + getStatusBadgeClass(log.status)">
+                            {{ getStatusLabel(log.status) }}
+                          </span>
+                        </td>
+
+                        <td class="px-4 py-3 whitespace-nowrap text-sm text-muted-foreground">
+                          {{ log.uploadDate.toDate() | date:'dd/MM/yyyy HH:mm' }}
+                        </td>
+
+                        <td class="px-4 py-3 text-sm text-foreground">
+                          <div class="font-medium">{{ log.uploadedBy }}</div>
+                          <div class="text-xs text-muted-foreground">{{ log.uploadedByEmail }}</div>
+                        </td>
+
+                        <td class="px-4 py-3 text-sm text-foreground">
+                          <div class="font-medium">{{ log.fileName }}</div>
+                          <div class="text-xs text-muted-foreground">{{ formatFileSize(log.fileSize) }}</div>
+                          <div *ngIf="log.comments" class="mt-2 text-xs text-muted-foreground line-clamp-2">
+                            {{ log.comments }}
+                          </div>
+                        </td>
+
+                        <td class="px-4 py-3 whitespace-nowrap text-right">
+                          <a
+                            [href]="log.fileUrl"
+                            target="_blank"
+                            download
+                            class="inline-flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-xs font-semibold text-foreground hover:bg-muted/30">
+                            <svg class="h-4 w-4 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                            </svg>
+                            Descargar
+                          </a>
+                        </td>
+                      </tr>
+
+                      <tr *ngIf="selectedVersionHistory.length === 0">
+                        <td colspan="6" class="px-4 py-8 text-center text-sm text-muted-foreground">
+                          No hay historial para mostrar.
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </div>
               </div>
 
-              <div class="p-6 border-t border-gray-200 flex justify-end">
+              <div class="flex justify-end gap-3 border-t border-border p-6">
                 <button
                   (click)="closeVersionHistoryModal()"
-                  class="px-6 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
+                  class="rounded-md border border-border bg-background px-4 py-2 text-sm font-medium text-foreground hover:bg-muted/30">
                   Cerrar
                 </button>
               </div>

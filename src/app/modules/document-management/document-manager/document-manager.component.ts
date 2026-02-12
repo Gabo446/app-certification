@@ -534,4 +534,9 @@ export class DocumentManagerComponent implements OnInit {
     };
     return labels[status as keyof typeof labels] || status;
   }
+
+  get selectedVersionHistory() {
+    const history = this.selectedDocument?.versionHistory ?? [];
+    return [...history].sort((a, b) => b.uploadDate.toMillis() - a.uploadDate.toMillis());
+  }
 }

@@ -33,12 +33,6 @@ const routes: Routes = [
       import('./modules/admin/company-admin/company-admin.component').then((m) => m.CompanyAdminComponent),
   },
   {
-    path: 'd-manager',
-    canActivate: [AuthGuard],
-    loadComponent: () =>
-      import('./modules/document-management/d-manager/d-manager.component').then((m) => m.DManagerComponent),
-  },
-  {
     path: 'document-manager',
     canActivate: [AuthGuard],
     loadComponent: () =>
